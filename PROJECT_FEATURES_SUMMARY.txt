@@ -1,0 +1,92 @@
+================================================================================
+           LEARNING CURVE SYSTEM - COMPLETE SUMMARY & FEATURES
+================================================================================
+
+[ 1. TECH STACK (Yeh Sab Tech Use Hua Hai) ]
+--------------------------------------------------------------------------------
+• Backend Framework : Laravel 11 (PHP 8.2+)
+• Database          : MySQL / MariaDB (Eloquent ORM, Migrations, Pivot Tables)
+• Frontend & UI     : Tailwind CSS, HTML5, Vanilla JavaScript, FontAwesome 6 Icons
+• Fonts             : Plus Jakarta Sans & Outfit (Google Fonts)
+• PDF Generation    : DomPDF (Barryvdh Laravel-DomPDF) for PDF Certificates
+• Email System      : Laravel Mailer + Custom MailLogger & DB Mail Logs
+• Security          : Multi-Department Role Auth (Student, Instructor, Admin, Staff, Finance), Date-Password Security, CSRF Protection, Encrypted Passwords.
+
+================================================================================
+
+[ 2. STUDENT SIDE FEATURES (User Portal) ]
+--------------------------------------------------------------------------------
+1. Account & Security:
+   - Registration & Login System (Role-based: Student).
+   - Password reset option OTP email verification ke saath.
+   - Profile Date-Password feature (day-of-month specific secondary password).
+
+2. Course Exploration & Enrollment:
+   - Public Home Page & Course Catalog (Search, Category & Difficulty Level filters).
+   - Single Course Page with Video Player (YouTube, Vimeo, ya direct MP4 Video upload).
+   - One-click Enroll aur Unenroll functionality.
+
+3. Student Dashboard & Real-Time Progress:
+   - Dashboard par Total Enrolled Courses, Hours Learned, Completed Courses & Certificates count.
+   - My Courses page (`/my-courses`) par har course ka real-time Progress Bar (0% to 100%).
+
+4. Assignments & Submissions:
+   - Course tasks/assignments dekhna, submission text aur File Upload (Max 10MB).
+   - Grade status check karna (Pending vs Graded) aur Admin ka feedback dekhna.
+
+5. Certificate System:
+   - Jab course ke saare assignments graded ho jate hain -> 100% Progress unlock hoti hai.
+   - High-quality Landscape PDF Certificate Preview aur Direct Download option.
+   - Automated Certificate Congratulatory Email.
+
+6. Support & Live Chat:
+   - Support Ticket raise karna (Help Center).
+   - Support staff ke sath Live Chat interaction.
+
+================================================================================
+
+[ 3. ADMIN & STAFF SIDE FEATURES (Admin Control Hub) ]
+--------------------------------------------------------------------------------
+1. Multi-Department Panel Selection:
+   - Panel Switcher for Admin, Staff, aur Finance Departments.
+
+2. Admin Dashboard & Metrics:
+   - Live system counts: Total Users, Active Courses, Pending Submissions, Sent Mails, Daily Activity.
+
+3. User Management (`/admin/users`):
+   - User Search, Role filter (Student, Instructor, Staff, Admin), Status filter.
+   - Bulk actions: Block, Unblock, Delete, Role change.
+   - User Detail drawer with full enrollment & activity history.
+
+4. Course & Assignment Management:
+   - Create, Edit, Delete Courses & Toggle Publish status.
+   - Video upload / Video link attachment support.
+   - Task creation (Points, Due Date) & Student Submission Grading System.
+
+5. Admin Certificates Hub (`/admin/certificates`) [NEW]:
+   - Sabhi issued certificates ki centralized list.
+   - Total Certificates Issued, Unique Students, Delivered Mails & Failed Mails stats.
+   - Admin student ka Certificate PDF live preview aur download kar sakta hai.
+   - One-click "Send / Resend Mail" button jisse student ko mail dobara chala jata hai.
+
+6. Enrollments Management (`/admin/enrollments`):
+   - All student enrollments with real-time progress bar.
+   - Manual Student Enrollment modal & Unenroll action.
+   - 100% progress completed student ke liye Certificate badge & Quick action buttons.
+
+7. Mail Logs & Broadcast Mail:
+   - System mail logs (Welcome mail, OTP, Password changed, Certificate mail).
+   - Direct Broadcast Mail composer with custom CTA button.
+
+8. Attendance & Staff Management (Main Admin & Staff Portal):
+   - Staff Work Logs & Attendance sheet (Clock-In / Clock-Out tracking).
+   - Finance Department integration for salary payments.
+
+9. Live Chat & Support Ticket System:
+   - Student Support Tickets reply, status update, transfer.
+   - Admin Live Chat Console for real-time student query resolution.
+
+================================================================================
+Generated for: Learning Curve LMS Project
+File: PROJECT_FEATURES_SUMMARY.txt
+================================================================================
