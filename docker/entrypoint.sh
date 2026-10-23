@@ -3,18 +3,26 @@ set -e
 
 cd /var/www/html
 
-# ── Detect DB type: use MySQL if DB_HOST is set, else SQLite ─────────────────
+# ── Detect DB type ────────────────────────────────────────────────────────────
 if [ -n "$DB_HOST" ]; then
     DB_CONN="mysql"
 else
     DB_CONN="sqlite"
 fi
 
-# ── Write .env using printf (avoids heredoc quote issues) ────────────────────
+# ── Detect if running on HTTPS (Render is always HTTPS) ──────────────────────
+# APP_URL will be https://... on Render
+SECURE_COOKIE="false"
+COOKIE_SAMESITE="lax"
+if echo "${APP_URL:-}" | grep -q "^https"; then
+    SECURE_COOKIE="true"
+fi
+
+# ── Write .env ────────────────────────────────────────────────────────────────
 printf 'APP_NAME="%s"\n'           "${APP_NAME:-Learning Curve}"   > .env
 printf 'APP_ENV=production\n'                                      >> .env
 printf 'APP_KEY=%s\n'              "${APP_KEY:-}"                  >> .env
-printf 'APP_DEBUG=true\n'                                          >> .env
+printf 'APP_DEBUG=false\n'                                         >> .env
 printf 'APP_URL=%s\n'              "${APP_URL:-http://localhost}"   >> .env
 printf '\n'                                                         >> .env
 printf 'LOG_CHANNEL=stderr\n'                                      >> .env
@@ -27,9 +35,13 @@ printf 'DB_DATABASE=%s\n'          "${DB_DATABASE:-/var/data/database.sqlite}" >
 printf 'DB_USERNAME=%s\n'          "${DB_USERNAME:-}"              >> .env
 printf 'DB_PASSWORD=%s\n'          "${DB_PASSWORD:-}"              >> .env
 printf '\n'                                                         >> .env
+# ── Session: database driver so sessions survive restarts ────────────────────
 printf 'SESSION_DRIVER=database\n'                                 >> .env
 printf 'SESSION_LIFETIME=120\n'                                    >> .env
 printf 'SESSION_ENCRYPT=false\n'                                   >> .env
+printf 'SESSION_SECURE_COOKIE=%s\n'  "${SECURE_COOKIE}"           >> .env
+printf 'SESSION_SAME_SITE=%s\n'      "${COOKIE_SAMESITE}"         >> .env
+printf 'SESSION_DOMAIN=\n'                                         >> .env
 printf '\n'                                                         >> .env
 printf 'BROADCAST_CONNECTION=log\n'                                >> .env
 printf 'FILESYSTEM_DISK=local\n'                                   >> .env
@@ -45,7 +57,7 @@ printf 'MAIL_PASSWORD="otbj rclb enxr wxol"\n'                    >> .env
 printf 'MAIL_FROM_ADDRESS=patoliyapatoliya5656@gmail.com\n'        >> .env
 printf 'MAIL_FROM_NAME="%s"\n'     "${APP_NAME:-Learning Curve}"   >> .env
 
-# ── SQLite: create persistent dir and DB file if needed ──────────────────────
+# ── SQLite: create persistent dir and DB file ────────────────────────────────
 if [ "$DB_CONN" = "sqlite" ]; then
     mkdir -p /var/data
     chown -R www-data:www-data /var/data
@@ -75,7 +87,7 @@ fi
 # ── Run migrations ────────────────────────────────────────────────────────────
 php artisan migrate --force
 
-# ── Cache config/routes/views ────────────────────────────────────────────────
+# ── Cache ─────────────────────────────────────────────────────────────────────
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
@@ -85,5 +97,4 @@ chown -R www-data:www-data storage bootstrap/cache database
 chmod -R 775 storage bootstrap/cache
 chmod -R 777 database
 
-# ── Start supervisor ──────────────────────────────────────────────────────────
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
