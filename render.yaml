@@ -22,3 +22,6 @@ services:
       # SQLite DB on persistent disk
       - key: DB_DATABASE
         value: /var/data/database.sqlite
+      # Render URL — required for HTTPS session cookies
+      - key: APP_URL
+        value: https://learning-system-4.onrender.com
