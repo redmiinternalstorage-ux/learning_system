@@ -23,7 +23,7 @@ printf '\n'                                                         >> .env
 printf 'DB_CONNECTION=%s\n'        "${DB_CONN}"                    >> .env
 printf 'DB_HOST=%s\n'              "${DB_HOST:-}"                  >> .env
 printf 'DB_PORT=%s\n'              "${DB_PORT:-3306}"              >> .env
-printf 'DB_DATABASE=%s\n'          "${DB_DATABASE:-/var/www/html/database/database.sqlite}" >> .env
+printf 'DB_DATABASE=%s\n'          "${DB_DATABASE:-/var/data/database.sqlite}" >> .env
 printf 'DB_USERNAME=%s\n'          "${DB_USERNAME:-}"              >> .env
 printf 'DB_PASSWORD=%s\n'          "${DB_PASSWORD:-}"              >> .env
 printf '\n'                                                         >> .env
@@ -45,10 +45,11 @@ printf 'MAIL_PASSWORD="otbj rclb enxr wxol"\n'                    >> .env
 printf 'MAIL_FROM_ADDRESS=patoliyapatoliya5656@gmail.com\n'        >> .env
 printf 'MAIL_FROM_NAME="%s"\n'     "${APP_NAME:-Learning Curve}"   >> .env
 
-# ── SQLite: create DB file if needed ─────────────────────────────────────────
+# ── SQLite: create persistent dir and DB file if needed ──────────────────────
 if [ "$DB_CONN" = "sqlite" ]; then
-    touch /var/www/html/database/database.sqlite
-    chmod 666 /var/www/html/database/database.sqlite
+    mkdir -p /var/data
+    touch /var/data/database.sqlite
+    chmod 666 /var/data/database.sqlite
 fi
 
 # ── Generate APP_KEY if missing ───────────────────────────────────────────────
