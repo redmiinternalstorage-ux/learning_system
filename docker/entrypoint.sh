@@ -10,43 +10,40 @@ else
     DB_CONN="sqlite"
 fi
 
-# ── Write .env ────────────────────────────────────────────────────────────────
-cat > .env << ENVEOF
-APP_NAME="${APP_NAME:-Learning Curve}"
-APP_ENV=production
-APP_KEY=${APP_KEY:-}
-APP_DEBUG=false
-APP_URL=${APP_URL:-http://localhost}
-
-LOG_CHANNEL=stderr
-LOG_LEVEL=error
-
-DB_CONNECTION=${DB_CONN}
-DB_HOST=${DB_HOST:-}
-DB_PORT=${DB_PORT:-3306}
-DB_DATABASE=${DB_DATABASE:-/var/www/html/database/database.sqlite}
-DB_USERNAME=${DB_USERNAME:-}
-DB_PASSWORD=${DB_PASSWORD:-}
-
-SESSION_DRIVER=file
-SESSION_LIFETIME=120
-SESSION_ENCRYPT=false
-
-BROADCAST_CONNECTION=log
-FILESYSTEM_DISK=local
-QUEUE_CONNECTION=sync
-
-CACHE_STORE=file
-
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USERNAME=patoliyapatoliya5656@gmail.com
-MAIL_PASSWORD="otbj rclb enxr wxol"
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=patoliyapatoliya5656@gmail.com
-MAIL_FROM_NAME="${APP_NAME:-Learning Curve}"
-ENVEOF
+# ── Write .env using printf (avoids heredoc quote issues) ────────────────────
+printf 'APP_NAME="%s"\n'           "${APP_NAME:-Learning Curve}"   > .env
+printf 'APP_ENV=production\n'                                      >> .env
+printf 'APP_KEY=%s\n'              "${APP_KEY:-}"                  >> .env
+printf 'APP_DEBUG=false\n'                                         >> .env
+printf 'APP_URL=%s\n'              "${APP_URL:-http://localhost}"   >> .env
+printf '\n'                                                         >> .env
+printf 'LOG_CHANNEL=stderr\n'                                      >> .env
+printf 'LOG_LEVEL=error\n'                                         >> .env
+printf '\n'                                                         >> .env
+printf 'DB_CONNECTION=%s\n'        "${DB_CONN}"                    >> .env
+printf 'DB_HOST=%s\n'              "${DB_HOST:-}"                  >> .env
+printf 'DB_PORT=%s\n'              "${DB_PORT:-3306}"              >> .env
+printf 'DB_DATABASE=%s\n'          "${DB_DATABASE:-/var/www/html/database/database.sqlite}" >> .env
+printf 'DB_USERNAME=%s\n'          "${DB_USERNAME:-}"              >> .env
+printf 'DB_PASSWORD=%s\n'          "${DB_PASSWORD:-}"              >> .env
+printf '\n'                                                         >> .env
+printf 'SESSION_DRIVER=file\n'                                     >> .env
+printf 'SESSION_LIFETIME=120\n'                                    >> .env
+printf 'SESSION_ENCRYPT=false\n'                                   >> .env
+printf '\n'                                                         >> .env
+printf 'BROADCAST_CONNECTION=log\n'                                >> .env
+printf 'FILESYSTEM_DISK=local\n'                                   >> .env
+printf 'QUEUE_CONNECTION=sync\n'                                   >> .env
+printf 'CACHE_STORE=file\n'                                        >> .env
+printf '\n'                                                         >> .env
+printf 'MAIL_MAILER=smtp\n'                                        >> .env
+printf 'MAIL_HOST=smtp.gmail.com\n'                                >> .env
+printf 'MAIL_PORT=587\n'                                           >> .env
+printf 'MAIL_ENCRYPTION=tls\n'                                     >> .env
+printf 'MAIL_USERNAME=patoliyapatoliya5656@gmail.com\n'            >> .env
+printf 'MAIL_PASSWORD="otbj rclb enxr wxol"\n'                    >> .env
+printf 'MAIL_FROM_ADDRESS=patoliyapatoliya5656@gmail.com\n'        >> .env
+printf 'MAIL_FROM_NAME="%s"\n'     "${APP_NAME:-Learning Curve}"   >> .env
 
 # ── SQLite: create DB file if needed ─────────────────────────────────────────
 if [ "$DB_CONN" = "sqlite" ]; then
@@ -61,7 +58,7 @@ fi
 
 # ── Wait for MySQL if used (max 30s) ─────────────────────────────────────────
 if [ "$DB_CONN" = "mysql" ]; then
-    echo "Waiting for MySQL at ${DB_HOST}:${DB_PORT:-3306}..."
+    echo "Waiting for MySQL..."
     i=0
     while [ $i -lt 30 ]; do
         php -r "new PDO('mysql:host=${DB_HOST};port=${DB_PORT:-3306};dbname=${DB_DATABASE}','${DB_USERNAME}','${DB_PASSWORD}');" 2>/dev/null && break
@@ -71,10 +68,10 @@ if [ "$DB_CONN" = "mysql" ]; then
     echo "MySQL ready."
 fi
 
-# ── Run migrations (includes admin user creation) ────────────────────────────
+# ── Run migrations ────────────────────────────────────────────────────────────
 php artisan migrate --force
 
-# ── Cache for production ──────────────────────────────────────────────────────
+# ── Cache config/routes/views ────────────────────────────────────────────────
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
@@ -84,5 +81,5 @@ chown -R www-data:www-data storage bootstrap/cache database
 chmod -R 775 storage bootstrap/cache
 chmod -R 777 database
 
-# ── Start server ──────────────────────────────────────────────────────────────
+# ── Start supervisor ──────────────────────────────────────────────────────────
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
