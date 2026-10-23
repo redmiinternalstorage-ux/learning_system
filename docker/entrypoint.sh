@@ -48,7 +48,10 @@ printf 'MAIL_FROM_NAME="%s"\n'     "${APP_NAME:-Learning Curve}"   >> .env
 # ── SQLite: create persistent dir and DB file if needed ──────────────────────
 if [ "$DB_CONN" = "sqlite" ]; then
     mkdir -p /var/data
+    chown -R www-data:www-data /var/data
+    chmod -R 777 /var/data
     touch /var/data/database.sqlite
+    chown www-data:www-data /var/data/database.sqlite
     chmod 666 /var/data/database.sqlite
 fi
 
