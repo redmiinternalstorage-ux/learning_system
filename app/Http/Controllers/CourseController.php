@@ -12,8 +12,13 @@ class CourseController extends Controller
     // Public home page
     public function home()
     {
-        $featuredCourses = Cache::remember('home_featured_courses', 300, fn() => Course::published()->latest()->take(6)->get());
-        $totalCourses    = Cache::remember('home_total_courses_count', 300, fn() => Course::published()->count());
+        try {
+            $featuredCourses = Cache::remember('home_featured_courses', 300, fn() => Course::published()->latest()->take(6)->get());
+            $totalCourses    = Cache::remember('home_total_courses_count', 300, fn() => Course::published()->count());
+        } catch (\Throwable $e) {
+            $featuredCourses = collect();
+            $totalCourses    = 0;
+        }
         $categories = ['Web Development', 'Data Science', 'Design', 'AI & ML', 'Mobile Development', 'Marketing'];
         return view('home', compact('featuredCourses', 'totalCourses', 'categories'));
     }
