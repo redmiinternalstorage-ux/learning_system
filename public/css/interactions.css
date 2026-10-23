@@ -1,0 +1,86 @@
+/* ===== Learning Curve — Interactive Effects (Green Theme) ===== */
+
+*, *::before, *::after {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button, [type="submit"], [type="button"] {
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    cursor: pointer;
+    user-select: none;
+}
+button:hover { transform: translateY(-1px); }
+button:active, [type="submit"]:active { transform: scale(0.97) !important; opacity: 0.9; }
+
+a { transition: color 0.2s ease, opacity 0.2s ease; }
+a:active { opacity: 0.75; }
+
+/* Cards lift on hover */
+.card-hover {
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    cursor: pointer;
+}
+.card-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px -8px rgba(5, 150, 105, 0.12);
+}
+.card-hover:active { transform: scale(0.99); }
+
+/* Nav links */
+nav a, aside a {
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+/* Inputs */
+input, select, textarea {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Table rows */
+tbody tr { transition: background 0.15s ease; }
+
+/* Ripple on click */
+.ripple { position: relative; overflow: hidden; }
+.ripple::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 150, 105, 0.12);
+    border-radius: inherit;
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+.ripple:active::after {
+    transform: scale(1);
+    opacity: 1;
+    transition: 0s;
+}
+
+/* Page entrance animation */
+main { animation: fadeUp 0.28s ease both; }
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Green button glow */
+a.bg-emerald-600:hover, button.bg-emerald-600:hover {
+    box-shadow: 0 6px 20px -4px rgba(5, 150, 105, 0.35);
+}
+a.bg-emerald-500:hover, button.bg-emerald-500:hover {
+    box-shadow: 0 6px 20px -4px rgba(16, 185, 129, 0.35);
+}
+
+/* Disabled button */
+button:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+
+/* Checkbox/radio */
+input[type="checkbox"]:hover, input[type="radio"]:hover { transform: scale(1.1); cursor: pointer; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #f0fdf4; }
+::-webkit-scrollbar-thumb { background: #6ee7b7; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #059669; }
