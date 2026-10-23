@@ -87,9 +87,11 @@ class AuthController extends Controller
     {
         $request->validate([
             'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'unique:users'],
+            'email'    => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'min:8', 'confirmed'],
             'role'     => ['required', 'in:student'],
+        ], [
+            'email.unique' => 'This email is already registered. Please login instead.',
         ]);
 
         $user = User::create([
