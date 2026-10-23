@@ -3,26 +3,20 @@ set -e
 
 cd /var/www/html
 
-# ── DB type ───────────────────────────────────────────────────────────────────
-if [ -n "$DB_HOST" ]; then
-    DB_CONN="mysql"
-else
-    DB_CONN="sqlite"
-fi
+# DB type
+if [ -n "$DB_HOST" ]; then DB_CONN="mysql"; else DB_CONN="sqlite"; fi
 
-# ── HTTPS detection ───────────────────────────────────────────────────────────
+# HTTPS detection
 SECURE_COOKIE="false"
-if echo "${APP_URL:-}" | grep -q "^https"; then
-    SECURE_COOKIE="true"
-fi
+if echo "${APP_URL:-}" | grep -q "^https"; then SECURE_COOKIE="true"; fi
 
-# ── Write .env (printf ensures real newlines in alpine sh) ───────────────────
+# Write .env
 {
 printf 'APP_NAME="Learning Curve"\n'
 printf 'APP_ENV=production\n'
-printf 'APP_KEY=%s\n'     "${APP_KEY:-}"
+printf 'APP_KEY=%s\n'  "${APP_KEY:-}"
 printf 'APP_DEBUG=false\n'
-printf 'APP_URL=%s\n'     "${APP_URL:-http://localhost}"
+printf 'APP_URL=%s\n'  "${APP_URL:-http://localhost}"
 printf 'LOG_CHANNEL=stderr\n'
 printf 'LOG_LEVEL=error\n'
 printf 'DB_CONNECTION=%s\n'  "${DB_CONN}"
@@ -51,7 +45,7 @@ printf 'MAIL_FROM_ADDRESS=patoliyapatoliya5656@gmail.com\n'
 printf 'MAIL_FROM_NAME="Learning Curve"\n'
 } > .env
 
-# ── SQLite setup on persistent disk ──────────────────────────────────────────
+# SQLite persistent disk
 if [ "$DB_CONN" = "sqlite" ]; then
     mkdir -p /var/data
     touch /var/data/database.sqlite
@@ -59,12 +53,10 @@ if [ "$DB_CONN" = "sqlite" ]; then
     chmod -R 777 /var/data
 fi
 
-# ── APP_KEY ───────────────────────────────────────────────────────────────────
-if [ -z "$APP_KEY" ]; then
-    php artisan key:generate --force
-fi
+# APP_KEY
+if [ -z "$APP_KEY" ]; then php artisan key:generate --force; fi
 
-# ── MySQL wait ────────────────────────────────────────────────────────────────
+# MySQL wait
 if [ "$DB_CONN" = "mysql" ]; then
     i=0
     while [ $i -lt 30 ]; do
@@ -73,17 +65,16 @@ if [ "$DB_CONN" = "mysql" ]; then
     done
 fi
 
-# ── Migrations ────────────────────────────────────────────────────────────────
+# Migrate
 php artisan migrate --force
 
-# ── Caches ────────────────────────────────────────────────────────────────────
+# Cache
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# ── Permissions ───────────────────────────────────────────────────────────────
+# Permissions
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
 
-# ── Start ─────────────────────────────────────────────────────────────────────
-exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+exec "$@"
