@@ -52,8 +52,8 @@ RUN chmod +x /entrypoint.sh \
                storage/framework/views \
                bootstrap/cache \
                database \
-    # Create SQLite DB file (used as fallback when no MySQL env vars given)
-    && touch database/database.sqlite \
+    # Always delete committed SQLite DB — fresh one created at runtime by entrypoint
+    && rm -f database/database.sqlite \
     # Remove stale dev-machine bootstrap cache (has dev-only providers)
     && rm -f bootstrap/cache/services.php bootstrap/cache/packages.php \
     # Create a minimal .env just for package:discover to run
