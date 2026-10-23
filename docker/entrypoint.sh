@@ -14,7 +14,7 @@ fi
 printf 'APP_NAME="%s"\n'           "${APP_NAME:-Learning Curve}"   > .env
 printf 'APP_ENV=production\n'                                      >> .env
 printf 'APP_KEY=%s\n'              "${APP_KEY:-}"                  >> .env
-printf 'APP_DEBUG=false\n'                                         >> .env
+printf 'APP_DEBUG=true\n'                                          >> .env
 printf 'APP_URL=%s\n'              "${APP_URL:-http://localhost}"   >> .env
 printf '\n'                                                         >> .env
 printf 'LOG_CHANNEL=stderr\n'                                      >> .env
