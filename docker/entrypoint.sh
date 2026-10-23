@@ -3,89 +3,85 @@ set -e
 
 cd /var/www/html
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Step 1: Build .env from environment variables
-# We write directly instead of relying on .env.example to avoid wrong defaults
-# ─────────────────────────────────────────────────────────────────────────────
-cat > .env <<EOF
+# ── Detect DB type: use MySQL if DB_HOST is set, else SQLite ─────────────────
+if [ -n "$DB_HOST" ]; then
+    DB_CONN="mysql"
+else
+    DB_CONN="sqlite"
+fi
+
+# ── Write .env ────────────────────────────────────────────────────────────────
+cat > .env << ENVEOF
 APP_NAME="${APP_NAME:-Learning Curve}"
-APP_ENV=${APP_ENV:-production}
+APP_ENV=production
 APP_KEY=${APP_KEY:-}
-APP_DEBUG=${APP_DEBUG:-false}
+APP_DEBUG=false
 APP_URL=${APP_URL:-http://localhost}
 
 LOG_CHANNEL=stderr
-LOG_LEVEL=${LOG_LEVEL:-error}
+LOG_LEVEL=error
 
-DB_CONNECTION=${DB_CONNECTION:-mysql}
-DB_HOST=${DB_HOST:-127.0.0.1}
+DB_CONNECTION=${DB_CONN}
+DB_HOST=${DB_HOST:-}
 DB_PORT=${DB_PORT:-3306}
-DB_DATABASE=${DB_DATABASE:-learning_system}
-DB_USERNAME=${DB_USERNAME:-root}
+DB_DATABASE=${DB_DATABASE:-/var/www/html/database/database.sqlite}
+DB_USERNAME=${DB_USERNAME:-}
 DB_PASSWORD=${DB_PASSWORD:-}
 
-SESSION_DRIVER=${SESSION_DRIVER:-database}
+SESSION_DRIVER=file
 SESSION_LIFETIME=120
 SESSION_ENCRYPT=false
 
 BROADCAST_CONNECTION=log
 FILESYSTEM_DISK=local
-QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
+QUEUE_CONNECTION=sync
 
-CACHE_STORE=${CACHE_STORE:-database}
+CACHE_STORE=file
 
 MAIL_MAILER=${MAIL_MAILER:-log}
-MAIL_HOST=${MAIL_HOST:-127.0.0.1}
-MAIL_PORT=${MAIL_PORT:-2525}
-MAIL_USERNAME=${MAIL_USERNAME:-null}
-MAIL_PASSWORD=${MAIL_PASSWORD:-null}
-MAIL_FROM_ADDRESS="${MAIL_FROM_ADDRESS:-hello@example.com}"
+MAIL_HOST=${MAIL_HOST:-}
+MAIL_PORT=${MAIL_PORT:-587}
+MAIL_USERNAME=${MAIL_USERNAME:-}
+MAIL_PASSWORD=${MAIL_PASSWORD:-}
+MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-hello@example.com}
 MAIL_FROM_NAME="${APP_NAME:-Learning Curve}"
-EOF
+ENVEOF
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Step 2: Generate APP_KEY if not provided
-# ─────────────────────────────────────────────────────────────────────────────
+# ── SQLite: create DB file if needed ─────────────────────────────────────────
+if [ "$DB_CONN" = "sqlite" ]; then
+    touch /var/www/html/database/database.sqlite
+    chmod 666 /var/www/html/database/database.sqlite
+fi
+
+# ── Generate APP_KEY if missing ───────────────────────────────────────────────
 if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force
 fi
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Step 3: Wait for DB to be ready (max 30s)
-# ─────────────────────────────────────────────────────────────────────────────
-echo "Waiting for database..."
-for i in $(seq 1 30); do
-    php -r "
-        try {
-            \$pdo = new PDO(
-                '${DB_CONNECTION:-mysql}:host=${DB_HOST:-127.0.0.1};port=${DB_PORT:-3306};dbname=${DB_DATABASE:-learning_system}',
-                '${DB_USERNAME:-root}',
-                '${DB_PASSWORD:-}'
-            );
-            exit(0);
-        } catch (Exception \$e) {
-            exit(1);
-        }
-    " && break || sleep 1
-done
-echo "Database is ready."
+# ── Wait for MySQL if used (max 30s) ─────────────────────────────────────────
+if [ "$DB_CONN" = "mysql" ]; then
+    echo "Waiting for MySQL at ${DB_HOST}:${DB_PORT:-3306}..."
+    i=0
+    while [ $i -lt 30 ]; do
+        php -r "new PDO('mysql:host=${DB_HOST};port=${DB_PORT:-3306};dbname=${DB_DATABASE}','${DB_USERNAME}','${DB_PASSWORD}');" 2>/dev/null && break
+        i=$((i+1))
+        sleep 1
+    done
+    echo "MySQL ready."
+fi
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Step 4: Run migrations
-# ─────────────────────────────────────────────────────────────────────────────
+# ── Run migrations ────────────────────────────────────────────────────────────
 php artisan migrate --force
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Step 5: Cache config/routes/views for performance
-# ─────────────────────────────────────────────────────────────────────────────
+# ── Cache for production ──────────────────────────────────────────────────────
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Step 6: Fix permissions and start
-# ─────────────────────────────────────────────────────────────────────────────
-chown -R www-data:www-data storage bootstrap/cache
+# ── Permissions ───────────────────────────────────────────────────────────────
+chown -R www-data:www-data storage bootstrap/cache database
 chmod -R 775 storage bootstrap/cache
+chmod -R 777 database
 
+# ── Start server ──────────────────────────────────────────────────────────────
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
