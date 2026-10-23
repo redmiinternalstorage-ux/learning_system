@@ -70,11 +70,8 @@ if [ "$DB_CONN" = "mysql" ]; then
     echo "MySQL ready."
 fi
 
-# ── Run migrations ────────────────────────────────────────────────────────────
+# ── Run migrations (includes admin user creation) ────────────────────────────
 php artisan migrate --force
-
-# ── Seed admin user (updateOrCreate — safe to run multiple times) ─────────────
-php artisan db:seed --class=DatabaseSeeder --force
 
 # ── Cache for production ──────────────────────────────────────────────────────
 php artisan config:cache
