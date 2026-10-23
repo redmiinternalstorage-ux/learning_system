@@ -1,0 +1,64 @@
+/* =========================================================
+   Learning Curve LMS — Core CSS Bundle
+   Modern Green + White Professional Theme
+   ========================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap');
+
+/* Mesh background */
+.bg-mesh-pattern {
+    background-color: #f0fdf4;
+    background-image:
+        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.10) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(5, 150, 105, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(110, 231, 183, 0.08) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(52, 211, 153, 0.10) 0px, transparent 50%);
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 20px 30px -15px rgba(0, 0, 0, 0.04), 0 0 15px rgba(5, 150, 105, 0.04);
+}
+
+.text-gradient-primary {
+    background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.btn-gradient-primary {
+    background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    color: white;
+}
+
+.btn-gradient-primary:hover {
+    background: linear-gradient(135deg, #047857 0%, #0f766e 100%);
+    box-shadow: 0 10px 20px -5px rgba(5, 150, 105, 0.30);
+    transform: translateY(-1px);
+}
+
+.animate-float-slow {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+    animation: float 7s ease-in-out infinite 2s;
+}
+
+.animate-pulse-glow {
+    animation: pulseGlow 4s infinite alternate;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(1deg); }
+}
+
+@keyframes pulseGlow {
+    0% { opacity: 0.3; filter: blur(20px); }
+    100% { opacity: 0.6; filter: blur(30px); }
+}
