@@ -1,0 +1,54 @@
+/* Force a consistent green-and-white light theme. Dark mode is not supported. */
+html { color-scheme: light !important; }
+html.dark { color-scheme: light !important; }
+
+body {
+    background: #f4fbf7 !important;
+    color: #1e293b !important;
+}
+
+.glass,
+.glass-light,
+.glass-amber,
+.glass-sky,
+.glass-emerald,
+.glass-rose {
+    background: #ffffff !important;
+    border-color: #d1fae5 !important;
+    color: #1e293b !important;
+    backdrop-filter: none !important;
+}
+
+.nav-item { color: #64748b !important; }
+.nav-item:hover { color: #047857 !important; background: #f0fdf4 !important; }
+.nav-item.active {
+    color: #047857 !important;
+    background: linear-gradient(90deg, rgba(5,150,105,.12), rgba(5,150,105,.03)) !important;
+    border-left-color: #059669 !important;
+}
+
+h1.text-white, h2.text-white, h3.text-white, h4.text-white,
+p.text-white, span.text-white, a.text-white, div.text-white, label.text-white {
+    color: #064e3b !important;
+}
+
+.grad-emerald, .grad-amber, .grad-rose, .grad-sky, .grad-violet, .grad-teal,
+.grad-emerald *, .grad-amber *, .grad-rose *, .grad-sky *, .grad-violet *, .grad-teal * {
+    color: #fff !important;
+}
+
+.inp, input, select, textarea {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #d1fae5 !important;
+}
+.inp:focus, input:focus, select:focus, textarea:focus {
+    border-color: #059669 !important;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12) !important;
+}
+
+.badge-green { background: #ecfdf5 !important; color: #047857 !important; border-color: #a7f3d0 !important; }
+.badge-amber { background: #fffbeb !important; color: #b45309 !important; border-color: #fde68a !important; }
+.badge-blue { background: #ecfdf5 !important; color: #047857 !important; border-color: #a7f3d0 !important; }
+.badge-rose { background: #fff1f2 !important; color: #be123c !important; border-color: #fecdd3 !important; }
+.badge-gray { background: #f8fafc !important; color: #64748b !important; border-color: #e2e8f0 !important; }
