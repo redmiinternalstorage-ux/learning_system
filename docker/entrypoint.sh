@@ -8,6 +8,9 @@ if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force
 fi
 
+# Clear stale cache files (dev packages like pail/sail are not installed)
+php artisan optimize:clear
+
 # Run migrations
 php artisan migrate --force
 
