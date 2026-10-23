@@ -67,6 +67,10 @@ COPY docker/entrypoint.sh    /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh \
     && mkdir -p storage/logs storage/framework/{cache,sessions,views} bootstrap/cache \
+    # Delete stale dev-machine cache files — they reference packages not installed with --no-dev
+    && rm -f bootstrap/cache/services.php bootstrap/cache/packages.php \
+    # Regenerate package manifest with only production packages
+    && php artisan package:discover --ansi \
     && chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
