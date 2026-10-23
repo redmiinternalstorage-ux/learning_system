@@ -1,0 +1,235 @@
+================================================================================
+          LEARNING CURVE LMS — COMPLETE SYSTEM BLUEPRINT & DESIGN SPECIFICATION
+================================================================================
+Generated: October 2026
+Version: 2.0 Complete Architecture Specification
+Technology Stack: PHP 8.2+ (Laravel 11.x), HTML5, Tailwind CSS v3, ES6 JavaScript, MySQL 8.0, DomPDF
+
+--------------------------------------------------------------------------------
+1. TECH STACK & SYSTEM ARCHITECTURE
+--------------------------------------------------------------------------------
+- Framework: Laravel 11.x (MVC Architecture)
+- Backend Language: PHP 8.2+
+- Database Engine: MySQL 8.0+ / MariaDB (Database Name: `learning_system`)
+- Frontend Template Engine: Laravel Blade Templates (`.blade.php`)
+- CSS Framework: Tailwind CSS v3 (Custom color extensions & typography plugins)
+- Icons Set: FontAwesome 6.5.0 Pro / Free SVG Library
+- Fonts:
+  * Primary Body Font: 'Plus Jakarta Sans', sans-serif
+  * Headings & Numbers Font: 'Outfit', sans-serif
+  * Monospace / Timers: 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', monospace
+- JavaScript Engine: Vanilla Native JS ES6+ (Async/Await, Fetch API, DOM Manipulation, Realtime Polling)
+- PDF Renderer: DomPDF (`barryvdh/laravel-dompdf`)
+- Mail Driver: SMTP (`smtp.gmail.com:587`, TLS with SSL Stream Context override for localhost)
+
+--------------------------------------------------------------------------------
+2. COLOR SYSTEM & DESIGN TOKEN SPECIFICATIONS
+--------------------------------------------------------------------------------
+- Brand Primary (Emerald / Green):
+  * Light Accent BG: #f0fdf4 (Tailwind: bg-emerald-50)
+  * Border Accent:   #a7f3d0 (Tailwind: border-emerald-200)
+  * Primary Solid:   #059669 (Tailwind: bg-emerald-600)
+  * Primary Hover:   #047857 (Tailwind: bg-emerald-700)
+  * Deep Dark:        #065f46 (Tailwind: bg-emerald-800)
+- Secondary Accent (Teal):
+  * Teal Solid:      #0d9488 (Tailwind: bg-teal-600)
+  * Teal Hover:      #0f766e (Tailwind: bg-teal-700)
+- Warning / Caution (Amber):
+  * Amber Solid:     #d97706 (Tailwind: bg-amber-600)
+  * Amber BG:        #fffbeb (Tailwind: bg-amber-50)
+- Danger / Error (Rose):
+  * Rose Solid:      #e11d48 (Tailwind: bg-rose-600)
+  * Rose Light BG:   #fff1f2 (Tailwind: bg-rose-50)
+- Neutral Dark (Under Maintenance & Headers):
+  * Deep Forest Slate: #04140e (Background)
+  * Container Dark:    #0f172a / #1e293b (Slate-900 / Slate-800)
+
+--------------------------------------------------------------------------------
+3. USER ROLES & ACCESS CONTROL MATRIX
+--------------------------------------------------------------------------------
+- student:
+  * Access: Public Pages, Student Dashboard, Courses, Assignments, Certificates, Progress Tracker, Help Tickets, 1-on-1 Staff Chat, Profile Settings, Date Passwords, Data Exports (PDF & Email), AI Chatbot.
+- staff:
+  * Access: All Student Features + Staff Portal (`/staff-portal`), Daily Attendance Clock-In (₹1,000/day rate), Assigned Tickets Handling, Staff Live Chat, WhatsApp-Style Team Chat (`/team-chat`).
+- finance:
+  * Access: All Staff Features + Finance Department (`/finance`), Staff Payroll Disbursal, Transaction Approvals with 3-Digit Finance PIN (`FINANCE_PIN=123`).
+- admin (Main Admin):
+  * Access: Full Unrestricted Superadmin Privileges, Admin Panel (`/admin`), User Management, Course Authoring, Maintenance Mode Toggle, System Analytics, Mail Logs & Direct Mail Composer, Staff Management.
+
+--------------------------------------------------------------------------------
+4. MODULE 1: USER / STUDENT PORTAL (A to Z SPECIFICATION)
+--------------------------------------------------------------------------------
+
+A. TOP NAVIGATION BAR (Student View)
+- Position: Sticky Top (Z-Index 40), White Background with Backdrop Blur.
+- Left Section: Brand Logo (Leaf icon inside Emerald-to-Teal rounded box) + "Learning Curve" Title.
+- Center Section: Navigation Links (Home, All Courses, Progress Tracker, Demo Certificates, Help Center).
+- Right Section:
+  * Floating AI Assistant Launch Button (Gradient Emerald-Teal, Animated Robot Icon & Pulse Dot).
+  * Student Profile Avatar Dropdown (Displays Name, Student Role, Profile Link, Logout Button).
+
+B. PUBLIC & ENROLLED COURSES PAGE (`/courses`, `/my-courses`)
+- Header Hero: Emerald Gradient Card with course statistics (Active Courses, Total Students enrolled).
+- Course Cards Grid (3 columns on desktop, 1 column on mobile):
+  * Thumbnail Image / Domain Category Badge (Web Dev, AI, Cyber Security, etc.)
+  * Course Title (Outfit font, font-bold, text-slate-900)
+  * Duration Hours Badge & Level (Beginner / Intermediate / Advanced)
+  * Real-Time Completion Progress Bar (0% to 100%, Emerald fill)
+  * Action Button: "Enroll Now" or "Continue Learning"
+
+C. COURSE LESSON & ASSIGNMENT VIEWER (`/courses/{id}`, `/tasks`)
+- Left Sidebar: Course Curriculum Outline & Lesson List.
+- Main Area: Video Player / Lesson Markdown Content.
+- Assignment Submission Box:
+  * Text submission field (HTML textarea)
+  * File Upload Input (Accepts PDF, ZIP, DOCX up to 10MB)
+  * Submit Button: Gradient Emerald with Spinner state
+  * Evaluation Status Chip: "Pending Review" (Amber) or "Graded - 95/100 pts" (Emerald).
+
+D. PROGRESS TRACKER & ANALYTICS (`/progress`)
+- Hero Banner: Learning Stats & Total Completed Courses Count.
+- Interactive Progress Bar Cards for each enrolled course.
+- Certificate Status Indicator: Shows progress remaining until 100% completion unlock.
+
+E. CERTIFICATES & DEMO SHOWCASE (`/certificates`, `/demo-certificates`)
+- Official Certificate: Unlocked automatically at 100% course completion. Displays Student Name, Course Title, Completion Date, QR Verification Code.
+- Demo Certificates Showcase (`/demo-certificates`):
+  * Displays generic sample certificates across Web Dev, AI, Cyber Security, Cloud DevOps.
+  * Hides student names for generic previewing.
+  * Direct "Preview PDF" and "Download Sample PDF" buttons.
+
+F. HELP CENTER & SUPPORT TICKETS (`/help`)
+- Create Ticket Form: Subject, Category dropdown (General, Course, Payment, Technical, Account, Assignment), Priority, Detailed Description.
+- Active Tickets List: Shows Ticket ID, Category Badge, Priority Color, Status ("Open", "In Progress", "Resolved"), Last Reply Timestamp.
+
+G. LIVE STAFF CHAT (`/chat`)
+- WhatsApp-Style 1-on-1 Chat Interface between Student and assigned Staff Agent.
+- Message Bubbles: Student messages aligned right (Emerald gradient), Staff messages aligned left (White card).
+- Auto-polling every 3 seconds for instant messaging.
+
+H. PROFILE & SECURITY SETTINGS (`/profile`)
+- Account Profile Update Form: Full Name, Email, Password update.
+- Date-Password Protection Manager:
+  * Configure day-of-month (1 to 31) secondary passwords.
+  * Active rules list with enable/disable toggle switch.
+- Export Personal Data Section:
+  * "Download My Data (PDF Sheet)" Button -> Generates instant PDF sheet download (`/profile/download-data`).
+  * "Receive Data Report on Mail" Button -> Triggers AJAX request (`POST /profile/email-data`), sends email with PDF sheet attachment, logs activity.
+
+I. FLOATING AI ASSISTANT WIDGET (`resources/views/partials/ai-chatbot.blade.php`)
+- Floating launcher button at bottom-right corner.
+- Slide-up Chat Window (360px wide, 520px high):
+  * Header: "Learning Curve AI" + Live pulse indicator + "Live Agent" quick link + Close button.
+  * Stream Area: Bot welcome message + Quick Starter Pills ("📜 Demo Certificates", "📥 Download/Email Data", "🎓 Certificate Guide", "📊 My Progress", "💬 Talk to Agent").
+  * Smart Intent Matcher: Responds in Markdown with interactive Action Pills (`connect_agent`, `email_data`, route URLs).
+  * Direct "Email Data Report" button inside chat stream triggers instant AJAX email send with inline feedback.
+
+--------------------------------------------------------------------------------
+5. MODULE 2: ADMIN PANEL (A to Z SPECIFICATION)
+--------------------------------------------------------------------------------
+
+A. TOPBAR HEADER (`resources/views/admin/layout.blade.php`)
+- Left Side: Mobile sidebar toggle hamburger + Page Title + Date.
+- Right Side Controls:
+  * Live Stopwatch Timer (`#admin-topbar-timer`): Ticking `00:00:00` live session uptime counter.
+  * Maintenance Mode Toggle Button:
+    - When OFF: Shows green "Site Live" pill. Click turns ON Maintenance Mode.
+    - When ON: Shows pulsing red "MAINTENANCE ON" pill. Click turns OFF Maintenance Mode.
+  * Department Switcher Button ("Switch Dept"): Switches between Admin, Staff, Finance.
+  * Change Admin Password Button: Opens modal popup.
+  * Quick Command Palette Button (`Ctrl+K`): Instant search modal across all admin routes.
+  * Admin Avatar & Role Badge ("Main Admin").
+
+B. DASHBOARD CONTROL CENTER (`/admin`)
+- Hero Banner: Gradient Emerald welcome card with quick action buttons ("+ New Course", "Manage Users").
+- Primary Stats Cards Grid (4 Columns):
+  1. Total Members
+  2. Active Students
+  3. Instructors
+  4. New Registrations This Month
+- Recent Activity Logs Stream & Unread Ticket Alerts.
+
+C. USERS MANAGER (`/admin/users`)
+- Filters: Search bar, Role filter dropdown (Student, Staff, Instructor, Admin), Status filter (Active, Blocked).
+- Users Data Table: Avatar, Name, Email, Role Badge, Joined Date, Actions (Edit, Block/Unblock toggle, Delete).
+
+D. COURSES & ASSIGNMENTS BUILDER (`/admin/courses`)
+- Course Table & Create Course Modal: Title, Category, Level, Duration Hours, Thumbnail URL, Publish/Unpublish toggle.
+- Task Builder (`/admin/courses/{course}/tasks`): Add assignment tasks, maximum score, due date.
+- Task Submissions Evaluator: View student submitted text & files, enter score (0-100), submit feedback comments.
+
+E. ANNOUNCEMENTS & AD MANAGER (`/admin/announcements`, `/admin/ads`)
+- Announcements Broadcast: Create announcements, pin to student dashboard, toggle active status.
+- Ad Campaign Manager: Add promotional banners, target URLs, click count tracking.
+
+F. MAIL LOGS & DIRECT MAILER (`/admin/mail-logs`, `/admin/mail-compose`)
+- Mail Logs Table: Mail Type Badge (Welcome, OTP, Password Changed, Data Report, Certificate, etc.), Recipient Email, Recipient Name, Success/Failure status, Timestamp.
+- Direct Mail Composer: Send customized direct HTML emails to single or bulk users.
+
+G. STAFF TEAM CHAT (`/team-chat`)
+- WhatsApp-Style Internal Staff & Admin Chat: Strictly restricted to `admin`, `staff`, and `finance` roles.
+- Left Sidebar: List of staff & admin users with online status badges.
+- Main Chat Window: Real-time message exchange, time formatting, instant polling.
+
+H. SITE SETTINGS & MAINTENANCE CONTROL (`/admin/settings`)
+- Form groups: General (Site Name, Tagline, Contact Email, Maintenance Mode), Messages, Security, Appearance.
+- Save Settings Button with instant activity log recording.
+
+--------------------------------------------------------------------------------
+6. MODULE 3: STAFF PORTAL (A to Z SPECIFICATION)
+--------------------------------------------------------------------------------
+- URL Prefix: `/staff-portal` (Accessible strictly by `staff` role).
+- Dashboard Stats: Daily Rate (₹1,000 / Present Day), Total Present Days This Month, Total Earned Salary.
+- Attendance Clock-In Widget: "Mark Present" button. Clock-in & Clock-out timestamps.
+- Bank Details Update Form: Bank Name, Account Number, IFSC Code, Account Holder Name.
+- Assigned Tickets & Live Chats: View and respond to support tickets transferred to staff.
+
+--------------------------------------------------------------------------------
+7. MODULE 4: FINANCE DEPARTMENT (A to Z SPECIFICATION)
+--------------------------------------------------------------------------------
+- URL Prefix: `/finance` (Accessible strictly by `finance` role).
+- Security Gate: Requires 3-Digit Finance PIN Verification (`FINANCE_PIN=123`).
+- Payroll Table: Lists all Staff members, Present days count, Calculated earnings (Days × ₹1,000).
+- Action Buttons: "Disburse Salary", "Mark Paid", "Transfer Funds". Records payouts in `salary_payments` table.
+
+--------------------------------------------------------------------------------
+8. DATABASE SCHEMA & TABLE SPECIFICATIONS
+--------------------------------------------------------------------------------
+1. `users`: id, name, email, password, role, is_blocked, position, salary, bank_account, bank_name, bank_ifsc, account_holder, created_at, updated_at
+2. `courses`: id, title, slug, description, category, level, duration_hours, thumbnail, is_published, created_at, updated_at
+3. `course_user`: id, user_id, course_id, progress, created_at, updated_at
+4. `tasks`: id, course_id, title, description, max_points, due_date, created_at, updated_at
+5. `task_submissions`: id, task_id, user_id, submission_text, file_path, points_awarded, feedback, status, created_at, updated_at
+6. `user_date_passwords`: id, user_id, day_of_month, password, is_active, created_at, updated_at
+7. `support_tickets`: id, user_id, subject, message, category, priority, status, admin_replied, assigned_to, created_at, updated_at
+8. `ticket_replies`: id, ticket_id, user_id, message, created_at, updated_at
+9. `chat_sessions`: id, user_id, staff_id, status, created_at, updated_at
+10. `chat_messages`: id, chat_session_id, sender_id, message, created_at, updated_at
+11. `staff_chat_messages`: id, sender_id, receiver_id, message, is_read, created_at, updated_at
+12. `staff_work_logs`: id, user_id, date, clock_in, clock_out, status, daily_rate, created_at, updated_at
+13. `salary_payments`: id, staff_id, amount, month_year, status, payment_date, created_at, updated_at
+14. `activity_logs`: id, user_id, action, target_type, target_id, target_label, description, ip, created_at, updated_at
+15. `mail_logs`: id, mail_type, recipient_email, recipient_name, user_id, success, error_message, triggered_by, created_at, updated_at
+16. `announcements`: id, title, content, is_pinned, is_active, created_at, updated_at
+17. `ads`: id, title, image_url, target_url, clicks_count, is_active, created_at, updated_at
+18. `site_settings`: id, key, value, type, group, label, created_at, updated_at
+
+--------------------------------------------------------------------------------
+9. UNDER MAINTENANCE SYSTEM SPECIFICATION
+--------------------------------------------------------------------------------
+- Middleware: `App\Http\Middleware\CheckMaintenanceMode`
+- Logic:
+  * Checks `SiteSetting::get('maintenance_mode')`.
+  * If active (1), non-admin public visitors & students are intercepted and served `resources/views/maintenance.blade.php` (HTTP Status 503).
+  * Admins, Staff, and Finance roles bypass the middleware and can access the platform & login routes (`/login`, `/admin*`).
+- Maintenance View (`resources/views/maintenance.blade.php`):
+  * Deep Forest Dark Theme (`#04140e`).
+  * Animated spinning maintenance gears icon.
+  * Status Badge: Pulsing "UNDER MAINTENANCE".
+  * Heading: "We'll Be Back Online Shortly! 🛠️"
+  * Description: Explaining scheduled system upgrades.
+  * Contact Support Section: "Need Urgent Assistance?" + Direct "Contact Support Team" email button (`mailto:admin@gmail.com`).
+
+================================================================================
+                           END OF BLUEPRINT SPECIFICATION
+================================================================================
