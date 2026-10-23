@@ -73,6 +73,9 @@ fi
 # ── Run migrations ────────────────────────────────────────────────────────────
 php artisan migrate --force
 
+# ── Seed admin user (updateOrCreate — safe to run multiple times) ─────────────
+php artisan db:seed --class=DatabaseSeeder --force
+
 # ── Cache for production ──────────────────────────────────────────────────────
 php artisan config:cache
 php artisan route:cache
