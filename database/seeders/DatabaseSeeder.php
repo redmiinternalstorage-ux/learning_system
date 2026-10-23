@@ -12,16 +12,14 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Admin
+        // Admin user — safe to run multiple times
         User::updateOrCreate(['email' => 'admin@gmail.com'], [
             'name'     => 'Admin',
             'password' => Hash::make('admin'),
             'role'     => 'admin',
         ]);
 
-        // Sample courses seeding removed to prevent fake data.
         $this->call(BcaSeeder::class);
         $this->call(QuestionSeeder::class);
-        $this->call(BcaSeeder::class);
     }
 }
