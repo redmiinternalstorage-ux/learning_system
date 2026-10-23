@@ -11,7 +11,12 @@ class CheckMaintenanceMode
 {
     public function handle(Request $request, Closure $next)
     {
-        $isMaintenance = (bool) SiteSetting::get('maintenance_mode', false);
+        try {
+            $isMaintenance = (bool) SiteSetting::get('maintenance_mode', false);
+        } catch (\Throwable $e) {
+            // DB not ready or table missing — skip maintenance check
+            return $next($request);
+        }
 
         if ($isMaintenance) {
             $user = Auth::user();
