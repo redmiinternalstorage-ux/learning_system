@@ -27,7 +27,7 @@ printf 'DB_DATABASE=%s\n'          "${DB_DATABASE:-/var/data/database.sqlite}" >
 printf 'DB_USERNAME=%s\n'          "${DB_USERNAME:-}"              >> .env
 printf 'DB_PASSWORD=%s\n'          "${DB_PASSWORD:-}"              >> .env
 printf '\n'                                                         >> .env
-printf 'SESSION_DRIVER=file\n'                                     >> .env
+printf 'SESSION_DRIVER=database\n'                                 >> .env
 printf 'SESSION_LIFETIME=120\n'                                    >> .env
 printf 'SESSION_ENCRYPT=false\n'                                   >> .env
 printf '\n'                                                         >> .env
