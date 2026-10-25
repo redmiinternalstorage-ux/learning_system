@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin Hub') — Learning Curve</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -601,15 +602,26 @@
             closeAdminExportModal();
 
             try {
+                // Always read CSRF token fresh from meta tag
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
                 const res = await fetch("{{ route('data.export.start') }}", {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                        'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ export_type: 'master_db_pdf', action: action })
                 });
+
+                // Session expired — reload to get fresh CSRF token
+                if (res.status === 419) {
+                    showToastNotice('⚠️ Session expired. Refreshing page...', 'error');
+                    setTimeout(() => window.location.reload(), 1500);
+                    return;
+                }
+
                 const data = await res.json();
                 if (data.ok) {
                     showToastNotice(data.message, 'success');
