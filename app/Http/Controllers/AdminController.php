@@ -43,12 +43,15 @@ class AdminController extends Controller
                 'activity_today'    => ActivityLog::whereDate('created_at', today())->count(),
             ];
         });
-        $recentUsers = User::latest()->take(8)->get();
-        $recentSubmissions = TaskSubmission::with(['user', 'task.course'])
-            ->latest()
-            ->take(5)
-            ->get();
-        $recentActivity = ActivityLog::with('user')->latest()->take(6)->get();
+        $recentUsers = Cache::remember('admin_recent_users', 60, fn() =>
+            User::latest()->take(8)->get()
+        );
+        $recentSubmissions = Cache::remember('admin_recent_submissions', 60, fn() =>
+            TaskSubmission::with(['user', 'task.course'])->latest()->take(5)->get()
+        );
+        $recentActivity = Cache::remember('admin_recent_activity', 60, fn() =>
+            ActivityLog::with('user')->latest()->take(6)->get()
+        );
         return view('admin.dashboard', compact('stats', 'recentUsers', 'recentSubmissions', 'recentActivity'));
     }
 
