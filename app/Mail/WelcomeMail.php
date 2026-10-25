@@ -4,14 +4,18 @@ namespace App\Mail;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class WelcomeMail extends Mailable
+class WelcomeMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
+
+    public $tries = 3;
+    public $backoff = 60;
 
     public function __construct(public User $user) {}
 
