@@ -34,7 +34,21 @@ php artisan cache:clear
 php artisan storage:link
 ```
 
-## Step 6: Access the Site
+## Step 6: Start the Queue Worker (Required for Emails)
+Emails (welcome mail on registration, etc.) are now **queued** for faster response times.
+You must run the queue worker for emails to actually get sent:
+
+```
+php artisan queue:work --tries=3 --timeout=60
+```
+
+Keep this running in a separate terminal while the site is in use.
+To run it once and exit (useful for testing):
+```
+php artisan queue:work --once
+```
+
+## Step 7: Access the Site
 Open: http://localhost/a/lj/learning_system/public
 
 ## Seeded Accounts (created automatically by migrations)
