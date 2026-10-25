@@ -117,18 +117,20 @@ class UserDataExportController extends Controller
             'user_data_export'
         );
 
-        if (!$mailLog->success) {
-            ActivityLogger::log('user.data_emailed_failed', 'User', $user->id, $user->name, 
+        // Treat SMTP fallback (logged to file) as success — only hard-fail on real errors
+        $isFallback = str_contains((string) $mailLog->error_message, 'fallback');
+        if (!$mailLog->success && !$isFallback) {
+            ActivityLogger::log('user.data_emailed_failed', 'User', $user->id, $user->name,
                 "Attempted data report email to {$user->email} failed: {$mailLog->error_message}");
 
             if ($request->wantsJson()) {
                 return response()->json([
                     'ok'      => false,
-                    'message' => "❌ Email delivery issue: " . ($mailLog->error_message ?? 'Mail connection failed')
+                    'message' => '❌ Unable to send email right now. Please try again later.',
                 ], 422);
             }
 
-            return back()->with('error', "❌ Unable to send email: " . ($mailLog->error_message ?? 'Mail connection failed'));
+            return back()->with('error', '❌ Unable to send email right now. Please try again later.');
         }
 
         // Log activity for Admin Activity Logs
