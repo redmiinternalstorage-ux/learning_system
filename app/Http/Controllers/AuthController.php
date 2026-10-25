@@ -126,14 +126,13 @@ class AuthController extends Controller
     public function dashboard()
     {
         $user = Auth::user();
-        
-        $enrolledCourses = $user->courses()->orderBy('courses.created_at', 'desc')->take(8)->get();
-        $enrolledCount   = $user->courses()->count();
-        $hoursLearned    = (int) $user->courses()->sum('courses.duration_hours');
-        $completedCount  = \Illuminate\Support\Facades\DB::table('course_user')
-            ->where('user_id', $user->id)
-            ->where('progress', '>=', 100)
-            ->count();
+
+        // Single query — load all enrolled courses with pivot once
+        $allCourses    = $user->courses()->orderBy('courses.created_at', 'desc')->get();
+        $enrolledCount = $allCourses->count();
+        $hoursLearned  = (int) $allCourses->sum('duration_hours');
+        $completedCount= $allCourses->filter(fn($c) => ($c->pivot->progress ?? 0) >= 100)->count();
+        $enrolledCourses = $allCourses->take(8);
 
         $stats = [
             'enrolled'     => $enrolledCount,
