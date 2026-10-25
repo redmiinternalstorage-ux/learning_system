@@ -43,18 +43,23 @@ class ForgotPasswordController extends Controller
         ]);
 
         // Send OTP email and log it
-        $logResult = MailLogger::log(
-            'otp',
-            $request->email,
-            $user->name,
-            $user->id,
-            fn() => Mail::to($request->email)->send(new OtpMail($otp, $user->name)),
-            'forgot_password',
-            ['otp_code' => $otp, 'otp_verified' => false]
-        );
-
-        if (!$logResult->success) {
-            return back()->withErrors(['email' => 'Failed to send OTP. Please try again.']);
+        try {
+            $logResult = MailLogger::log(
+                'otp',
+                $request->email,
+                $user->name,
+                $user->id,
+                fn() => Mail::to($request->email)->send(new OtpMail($otp, $user->name)),
+                'forgot_password',
+                ['otp_code' => $otp, 'otp_verified' => false]
+            );
+            // Only block on real failures (not connection fallback)
+            if (!$logResult->success && !str_contains((string)$logResult->error_message, 'fallback')) {
+                return back()->withErrors(['email' => 'Failed to send OTP. Please try again.']);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('OTP mail failed: ' . $e->getMessage());
+            return back()->withErrors(['email' => 'Mail service error. Please try again in a moment.']);
         }
 
         // Store email in session for next step
@@ -177,18 +182,22 @@ class ForgotPasswordController extends Controller
             'expires_at' => now()->addMinutes(5),
         ]);
 
-        $logResult = MailLogger::log(
-            'otp_resend',
-            $email,
-            $user->name,
-            $user->id,
-            fn() => Mail::to($email)->send(new OtpMail($otp, $user->name)),
-            'forgot_password',
-            ['otp_code' => $otp, 'otp_verified' => false]
-        );
-
-        if (!$logResult->success) {
-            return back()->withErrors(['otp' => 'Failed to resend OTP.']);
+        try {
+            $logResult = MailLogger::log(
+                'otp_resend',
+                $email,
+                $user->name,
+                $user->id,
+                fn() => Mail::to($email)->send(new OtpMail($otp, $user->name)),
+                'forgot_password',
+                ['otp_code' => $otp, 'otp_verified' => false]
+            );
+            if (!$logResult->success && !str_contains((string)$logResult->error_message, 'fallback')) {
+                return back()->withErrors(['otp' => 'Failed to resend OTP. Please try again.']);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('OTP resend mail failed: ' . $e->getMessage());
+            return back()->withErrors(['otp' => 'Mail service error. Please try again in a moment.']);
         }
 
         return back()->with('success', 'New OTP sent to ' . $email);
