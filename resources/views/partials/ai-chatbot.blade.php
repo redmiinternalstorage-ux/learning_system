@@ -127,7 +127,7 @@ async function triggerEmailData(btn) {
         const res = await fetch("{{ route('profile.data.email') }}", {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                 'Accept': 'application/json'
             }
         });
@@ -200,7 +200,7 @@ async function sendAiMessage() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                 'Accept': 'application/json'
             },
             body: JSON.stringify({ message: msg })
