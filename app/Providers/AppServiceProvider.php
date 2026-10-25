@@ -58,5 +58,16 @@ class AppServiceProvider extends ServiceProvider
 
         \App\Models\Ad::saved(fn() => \Illuminate\Support\Facades\Cache::forget('active_ad_overlay'));
         \App\Models\Ad::deleted(fn() => \Illuminate\Support\Facades\Cache::forget('active_ad_overlay'));
+
+        // Invalidate maintenance mode cache when settings change
+        \App\Models\SiteSetting::saved(fn() => \Illuminate\Support\Facades\Cache::forget('setting_maintenance_mode'));
+        \App\Models\SiteSetting::deleted(fn() => \Illuminate\Support\Facades\Cache::forget('setting_maintenance_mode'));
+
+        // Invalidate admin recent data caches
+        \App\Models\User::saved(function() {
+            \Illuminate\Support\Facades\Cache::forget('admin_recent_users');
+        });
+        \App\Models\TaskSubmission::saved(fn() => \Illuminate\Support\Facades\Cache::forget('admin_recent_submissions'));
+        \App\Models\ActivityLog::saved(fn() => \Illuminate\Support\Facades\Cache::forget('admin_recent_activity'));
     }
 }
