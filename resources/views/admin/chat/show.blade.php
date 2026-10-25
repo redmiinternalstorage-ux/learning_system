@@ -191,7 +191,7 @@
     input.value = '';
     fetch(`/admin/chat/${sessionId}/send`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}'},
+      headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''},
       body: JSON.stringify({ message: msg })
     }).then(r => r.json()).then(d => {
       if (d.ok) poll();
@@ -215,7 +215,7 @@
     if (!confirm('Close this chat session?')) return;
     fetch(`/admin/chat/${sessionId}/close`, {
       method: 'POST',
-      headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}
+      headers: {'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''}
     }).then(() => window.location.reload());
   }
 
