@@ -40,7 +40,7 @@ printf 'MAIL_HOST=smtp.gmail.com\n'
 printf 'MAIL_PORT=587\n'
 printf 'MAIL_ENCRYPTION=tls\n'
 printf 'MAIL_USERNAME=patoliyapatoliya5656@gmail.com\n'
-printf 'MAIL_PASSWORD="otbj rclb enxr wxol"\n'
+printf 'MAIL_PASSWORD="osgb zhhp vtmy swhy"\n'
 printf 'MAIL_FROM_ADDRESS=patoliyapatoliya5656@gmail.com\n'
 printf 'MAIL_FROM_NAME="Learning Curve"\n'
 } > .env
