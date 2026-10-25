@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Dashboard') - Learning Curve</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -406,15 +407,26 @@ async function startUserExport(action) {
     closeUserDataModal();
 
     try {
+        // Always read CSRF token fresh from meta tag (never use stale Blade-rendered token)
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
         const res = await fetch("{{ route('data.export.start') }}", {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                'X-CSRF-TOKEN': csrfToken,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ export_type: 'user_data_pdf', action: action })
         });
+
+        // Handle CSRF mismatch — session expired, reload page to refresh token
+        if (res.status === 419) {
+            showStudentToastNotice('⚠️ Session expired. Refreshing page...', 'error');
+            setTimeout(() => window.location.reload(), 1500);
+            return;
+        }
+
         const data = await res.json();
         if (data.ok) {
             showStudentToastNotice(data.message, 'success');
