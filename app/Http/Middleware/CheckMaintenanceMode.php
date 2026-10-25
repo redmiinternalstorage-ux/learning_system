@@ -12,9 +12,12 @@ class CheckMaintenanceMode
     public function handle(Request $request, Closure $next)
     {
         try {
-            $isMaintenance = (bool) SiteSetting::get('maintenance_mode', false);
+            // Cache maintenance mode — avoids DB hit on every single request
+            $isMaintenance = (bool) \Illuminate\Support\Facades\Cache::remember(
+                'setting_maintenance_mode', 60,
+                fn() => SiteSetting::get('maintenance_mode', false)
+            );
         } catch (\Throwable $e) {
-            // DB not ready or table missing — skip maintenance check
             return $next($request);
         }
 
