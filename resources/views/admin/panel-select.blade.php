@@ -19,21 +19,15 @@
         * { box-sizing: border-box; }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f8fafc;
+            background: linear-gradient(135deg, #0a0f1e 0%, #0d1f18 40%, #071a2e 100%);
             min-height: 100vh;
             overflow-x: hidden;
             color: #0f172a;
         }
         .font-outfit { font-family: 'Outfit', sans-serif; }
-
-        .bg-mesh {
-            position: fixed; inset: 0; z-index: 0; pointer-events: none;
-            background:
-                radial-gradient(ellipse 70% 60% at 15% 15%, rgba(16,185,129,.12) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 60% at 85% 85%, rgba(13,148,136,.08) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 40% at 50% 50%, rgba(52,211,153,.06) 0%, transparent 60%),
-                #f8fafc;
-        }
+        #bg-canvas-3d { position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none; }
+        body > *:not(#bg-canvas-3d) { position:relative;z-index:1; }
+        .bg-mesh { display:none; }
 
         /* Role cards */
         .role-card {
@@ -413,6 +407,8 @@
             document.getElementById('dept-auth-backdrop').classList.add('hidden');
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+    @include('partials.3d-background')
 @include('partials.global-loader')
 </body>
 </html>
