@@ -23,21 +23,16 @@
         * { box-sizing: border-box; }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f0fdf4;
+            background: linear-gradient(135deg, #0a0f1e 0%, #0d1f18 40%, #071a2e 100%);
             min-height: 100vh;
             overflow-x: hidden;
         }
         .font-outfit { font-family: 'Outfit', sans-serif; }
+        #bg-canvas-3d { position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none; }
+        body > *:not(#bg-canvas-3d) { position:relative;z-index:1; }
 
-        /* Animated green background mesh */
-        .bg-mesh {
-            position: fixed; inset: 0; z-index: 0; pointer-events: none;
-            background:
-                radial-gradient(ellipse 80% 60% at 20% 10%,  rgba(5, 150, 105, 0.22) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 70% at 80% 90%,  rgba(16, 185, 129, 0.12) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 50% at 60% 30%,  rgba(52, 211, 153, 0.08) 0%, transparent 55%),
-                #f0fdf4;
-        }
+        /* Old bg-mesh kept but hidden — canvas replaces it */
+        .bg-mesh { display: none; }
 
         /* Floating particles */
         .particle {
@@ -432,6 +427,8 @@
             container.appendChild(p);
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+    @include('partials.3d-background')
 @include('partials.global-loader')
 </body>
 </html>
