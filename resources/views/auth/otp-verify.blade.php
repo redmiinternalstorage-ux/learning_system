@@ -9,7 +9,11 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="/css/interactions.css">
 <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0fdf4; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient(135deg,#0a0f1e 0%,#0d1f18 40%,#071a2e 100%); }
+    #bg-canvas-3d{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+    body>*:not(#bg-canvas-3d){position:relative;z-index:1;}
+    nav{background:rgba(255,255,255,0.08)!important;border-bottom-color:rgba(255,255,255,0.1)!important;}
+    nav a,nav span{color:rgba(255,255,255,0.9)!important;}
     .otp-input {
         width: 48px; height: 56px;
         text-align: center; font-size: 22px; font-weight: 800;
@@ -257,5 +261,7 @@ function updateHidden() {
 document.getElementById('otp-0').focus();
 </script>
 @include('partials.global-loader')
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+@include('partials.3d-background')
 </body>
 </html>
