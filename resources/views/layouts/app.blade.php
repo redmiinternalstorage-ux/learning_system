@@ -315,8 +315,6 @@
 @endauth
 @include('partials.global-loader')
 @stack('scripts')
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-@include('partials.3d-background')
 
 {{-- ── User Data Backup & Export Modal (BG Tracker) ── --}}
 <div id="userDataModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
