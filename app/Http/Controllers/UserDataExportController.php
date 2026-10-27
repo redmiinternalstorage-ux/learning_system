@@ -117,9 +117,8 @@ class UserDataExportController extends Controller
             'user_data_export'
         );
 
-        // Treat SMTP fallback (logged to file) as success — only hard-fail on real errors
-        $isFallback = str_contains((string) $mailLog->error_message, 'fallback');
-        if (!$mailLog->success && !$isFallback) {
+        // Real failure check — MailLogger now accurately reports success/failure
+        if (!$mailLog->success) {
             ActivityLogger::log('user.data_emailed_failed', 'User', $user->id, $user->name,
                 "Attempted data report email to {$user->email} failed: {$mailLog->error_message}");
 
