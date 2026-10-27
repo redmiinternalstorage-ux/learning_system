@@ -23,15 +23,11 @@
         * { box-sizing: border-box; }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(135deg, #0a0f1e 0%, #0d1f18 40%, #071a2e 100%);
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 40%, #f8fafc 100%);
             min-height: 100vh;
             overflow-x: hidden;
         }
         .font-outfit { font-family: 'Outfit', sans-serif; }
-        #bg-canvas-3d { position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none; }
-        body > *:not(#bg-canvas-3d) { position:relative;z-index:1; }
-
-        /* Old bg-mesh kept but hidden — canvas replaces it */
         .bg-mesh { display: none; }
 
         /* Floating particles */
@@ -427,8 +423,6 @@
             container.appendChild(p);
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-    @include('partials.3d-background')
 @include('partials.global-loader')
 </body>
 </html>
