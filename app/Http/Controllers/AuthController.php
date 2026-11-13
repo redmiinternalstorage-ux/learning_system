@@ -101,19 +101,18 @@ class AuthController extends Controller
             'role'     => $request->role,
         ]);
 
-        // Send welcome email — queued, so registration never blocks on SMTP
+        // Send welcome email — sync send so delivery is guaranteed
         try {
             MailLogger::log(
                 'welcome',
                 $user->email,
                 $user->name,
                 $user->id,
-                fn() => \Mail::to($user->email)->queue(new \App\Mail\WelcomeMail($user)),
+                fn() => \Mail::to($user->email)->send(new \App\Mail\WelcomeMail($user)),
                 'registration'
             );
         } catch (\Throwable $e) {
-            // Queue dispatch failed — log but don't break registration
-            \Illuminate\Support\Facades\Log::warning('Welcome mail queue failed: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::warning('Welcome mail failed: ' . $e->getMessage());
         }
 
         return redirect()->route('login')
