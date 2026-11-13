@@ -53,9 +53,8 @@ class ForgotPasswordController extends Controller
                 'forgot_password',
                 ['otp_code' => $otp, 'otp_verified' => false]
             );
-            // Only block on real failures (not connection fallback)
-            if (!$logResult->success && !str_contains((string)$logResult->error_message, 'fallback')) {
-                return back()->withErrors(['email' => 'Failed to send OTP. Please try again.']);
+            if (!$logResult->success) {
+                return back()->withErrors(['email' => 'Failed to send OTP: ' . $logResult->error_message]);
             }
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::error('OTP mail failed: ' . $e->getMessage());
