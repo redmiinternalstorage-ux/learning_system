@@ -38,15 +38,13 @@ return [
     'mailers' => [
 
         'smtp' => [
-            'transport'    => 'smtp',
-            'url'          => env('MAIL_URL'),
-            'host'         => env('MAIL_HOST', 'sandbox.smtp.mailtrap.io'),
-            'port'         => env('MAIL_PORT', 2525),
-            'encryption'   => env('MAIL_ENCRYPTION', 'tls'),
-            'username'     => env('MAIL_USERNAME'),
-            'password'     => env('MAIL_PASSWORD'),
-            'timeout'      => 30,
-            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+            'transport'  => 'smtp',
+            'host'       => env('MAIL_HOST', 'smtp.gmail.com'),
+            'port'       => env('MAIL_PORT', 587),
+            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+            'username'   => env('MAIL_USERNAME'),
+            'password'   => env('MAIL_PASSWORD'),
+            'timeout'    => 60,
         ],
 
         'ses' => [
@@ -81,10 +79,7 @@ return [
 
         'failover' => [
             'transport' => 'failover',
-            'mailers' => [
-                'resend',
-                'log',
-            ],
+            'mailers'   => ['smtp', 'log'],
             'retry_after' => 60,
         ],
 
