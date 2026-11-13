@@ -10,21 +10,21 @@ if [ -n "$DB_HOST" ]; then DB_CONN="mysql"; else DB_CONN="sqlite"; fi
 SECURE_COOKIE="false"
 if echo "${APP_URL:-}" | grep -q "^https"; then SECURE_COOKIE="true"; fi
 
-# Write .env
+# Write .env — all values with potential spaces MUST be double-quoted
 {
 printf 'APP_NAME="Learning Curve"\n'
 printf 'APP_ENV=production\n'
-printf 'APP_KEY=%s\n'  "${APP_KEY:-}"
+printf 'APP_KEY="%s"\n'    "${APP_KEY:-}"
 printf 'APP_DEBUG=false\n'
-printf 'APP_URL=%s\n'  "${APP_URL:-http://localhost}"
+printf 'APP_URL="%s"\n'    "${APP_URL:-http://localhost}"
 printf 'LOG_CHANNEL=stderr\n'
 printf 'LOG_LEVEL=error\n'
-printf 'DB_CONNECTION=%s\n'  "${DB_CONN}"
-printf 'DB_HOST=%s\n'        "${DB_HOST:-}"
-printf 'DB_PORT=%s\n'        "${DB_PORT:-3306}"
-printf 'DB_DATABASE=%s\n'    "${DB_DATABASE:-/var/data/database.sqlite}"
-printf 'DB_USERNAME=%s\n'    "${DB_USERNAME:-}"
-printf 'DB_PASSWORD=%s\n'    "${DB_PASSWORD:-}"
+printf 'DB_CONNECTION=%s\n'   "${DB_CONN}"
+printf 'DB_HOST=%s\n'         "${DB_HOST:-}"
+printf 'DB_PORT=%s\n'         "${DB_PORT:-3306}"
+printf 'DB_DATABASE="%s"\n'   "${DB_DATABASE:-/var/data/database.sqlite}"
+printf 'DB_USERNAME="%s"\n'   "${DB_USERNAME:-}"
+printf 'DB_PASSWORD="%s"\n'   "${DB_PASSWORD:-}"
 printf 'SESSION_DRIVER=database\n'
 printf 'SESSION_LIFETIME=120\n'
 printf 'SESSION_ENCRYPT=false\n'
@@ -39,11 +39,12 @@ printf 'MAIL_MAILER=%s\n'           "${MAIL_MAILER:-smtp}"
 printf 'MAIL_HOST=%s\n'             "${MAIL_HOST:-smtp.gmail.com}"
 printf 'MAIL_PORT=%s\n'             "${MAIL_PORT:-587}"
 printf 'MAIL_ENCRYPTION=%s\n'       "${MAIL_ENCRYPTION:-tls}"
-printf 'MAIL_USERNAME=%s\n'         "${MAIL_USERNAME:-}"
-printf 'MAIL_PASSWORD=%s\n'         "${MAIL_PASSWORD:-}"
-printf 'MAIL_FROM_ADDRESS=%s\n'     "${MAIL_FROM_ADDRESS:-}"
-printf 'MAIL_FROM_NAME=%s\n'        "${MAIL_FROM_NAME:-Learning Curve}"
-printf 'RESEND_API_KEY=%s\n'        "${RESEND_API_KEY:-}"
+printf 'MAIL_USERNAME="%s"\n'       "${MAIL_USERNAME:-}"
+printf 'MAIL_PASSWORD="%s"\n'       "${MAIL_PASSWORD:-}"
+printf 'MAIL_FROM_ADDRESS="%s"\n'   "${MAIL_FROM_ADDRESS:-}"
+printf 'MAIL_FROM_NAME="%s"\n'      "${MAIL_FROM_NAME:-Learning Curve}"
+printf 'RESEND_API_KEY="%s"\n'      "${RESEND_API_KEY:-}"
+printf 'FINANCE_PIN="%s"\n'         "${FINANCE_PIN:-123}"
 } > .env
 
 # SQLite persistent disk
