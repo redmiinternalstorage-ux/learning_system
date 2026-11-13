@@ -35,14 +35,15 @@ printf 'BROADCAST_CONNECTION=log\n'
 printf 'FILESYSTEM_DISK=local\n'
 printf 'QUEUE_CONNECTION=sync\n'
 printf 'CACHE_STORE=file\n'
-printf 'MAIL_MAILER=smtp\n'
-printf 'MAIL_HOST=smtp.gmail.com\n'
-printf 'MAIL_PORT=587\n'
-printf 'MAIL_ENCRYPTION=tls\n'
-printf 'MAIL_USERNAME=patoliyapatoliya5656@gmail.com\n'
-printf 'MAIL_PASSWORD="osgb zhhp vtmy swhy"\n'
-printf 'MAIL_FROM_ADDRESS=patoliyapatoliya5656@gmail.com\n'
-printf 'MAIL_FROM_NAME="Learning Curve"\n'
+printf 'MAIL_MAILER=%s\n'           "${MAIL_MAILER:-smtp}"
+printf 'MAIL_HOST=%s\n'             "${MAIL_HOST:-smtp.gmail.com}"
+printf 'MAIL_PORT=%s\n'             "${MAIL_PORT:-587}"
+printf 'MAIL_ENCRYPTION=%s\n'       "${MAIL_ENCRYPTION:-tls}"
+printf 'MAIL_USERNAME=%s\n'         "${MAIL_USERNAME:-}"
+printf 'MAIL_PASSWORD=%s\n'         "${MAIL_PASSWORD:-}"
+printf 'MAIL_FROM_ADDRESS=%s\n'     "${MAIL_FROM_ADDRESS:-}"
+printf 'MAIL_FROM_NAME=%s\n'        "${MAIL_FROM_NAME:-Learning Curve}"
+printf 'RESEND_API_KEY=%s\n'        "${RESEND_API_KEY:-}"
 } > .env
 
 # SQLite persistent disk
