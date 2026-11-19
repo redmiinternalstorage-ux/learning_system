@@ -4,7 +4,9 @@ set -e
 cd /var/www/html
 
 # DB type
-if [ -n "$DB_HOST" ]; then DB_CONN="mysql"; else DB_CONN="sqlite"; fi
+if [ -n "$DB_HOST" ] && [ "${DB_CONNECTION:-}" = "pgsql" ]; then DB_CONN="pgsql";
+elif [ -n "$DB_HOST" ]; then DB_CONN="mysql";
+else DB_CONN="sqlite"; fi
 
 # HTTPS detection
 SECURE_COOKIE="false"
@@ -21,10 +23,11 @@ printf 'LOG_CHANNEL=stderr\n'
 printf 'LOG_LEVEL=error\n'
 printf 'DB_CONNECTION=%s\n'   "${DB_CONN}"
 printf 'DB_HOST=%s\n'         "${DB_HOST:-}"
-printf 'DB_PORT=%s\n'         "${DB_PORT:-3306}"
+printf 'DB_PORT=%s\n'         "${DB_PORT:-5432}"
 printf 'DB_DATABASE="%s"\n'   "${DB_DATABASE:-/var/data/database.sqlite}"
 printf 'DB_USERNAME="%s"\n'   "${DB_USERNAME:-}"
 printf 'DB_PASSWORD="%s"\n'   "${DB_PASSWORD:-}"
+printf 'DB_SSLMODE=require\n'
 printf 'SESSION_DRIVER=database\n'
 printf 'SESSION_LIFETIME=120\n'
 printf 'SESSION_ENCRYPT=false\n'
@@ -63,6 +66,15 @@ if [ "$DB_CONN" = "mysql" ]; then
     i=0
     while [ $i -lt 30 ]; do
         php -r "new PDO('mysql:host=${DB_HOST};port=${DB_PORT:-3306};dbname=${DB_DATABASE}','${DB_USERNAME}','${DB_PASSWORD}');" 2>/dev/null && break
+        i=$((i+1)); sleep 1
+    done
+fi
+
+# PostgreSQL wait
+if [ "$DB_CONN" = "pgsql" ]; then
+    i=0
+    while [ $i -lt 30 ]; do
+        php -r "new PDO('pgsql:host=${DB_HOST};port=${DB_PORT:-5432};dbname=${DB_DATABASE}','${DB_USERNAME}','${DB_PASSWORD}');" 2>/dev/null && break
         i=$((i+1)); sleep 1
     done
 fi
