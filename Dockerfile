@@ -13,9 +13,10 @@ RUN apk add --no-cache \
         nginx curl bash \
         libpng-dev libzip-dev zip unzip \
         sqlite sqlite-dev \
+        postgresql-dev \
         freetype-dev libjpeg-turbo-dev libwebp-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install pdo pdo_sqlite pdo_mysql zip gd opcache bcmath pcntl \
+    && docker-php-ext-install pdo pdo_sqlite pdo_mysql pdo_pgsql pgsql zip gd opcache bcmath pcntl \
     && mkdir -p /run/nginx /var/log/nginx /var/log/php-fpm
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
