@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 class GoogleSheetHelper
 {
     // Apps Script Web App URL
-    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxWjl0cmwOGKMlBH9-r3MqbcyGQhgFp2grlMumf3n1fPUGaxViI6tjWuPkJVzDrvsYx/exec';
+    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbx2tPVuJqdRjHVpI_NueZRkNTH9vO87d9k1LcpDWrYvlAqXeuNuAuGWkSt9Yjv9KD0o/exec';
 
     /**
      * Push a single user to Google Sheet.
