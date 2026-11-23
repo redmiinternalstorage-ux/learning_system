@@ -76,8 +76,14 @@ while [ $i -lt 30 ]; do
     i=$((i+1)); sleep 1
 done
 
-# Migrate
+# Migrate — run without set -e so a failed migration doesn't kill the container
+set +e
 php artisan migrate --force
+MIGRATE_EXIT=$?
+set -e
+if [ $MIGRATE_EXIT -ne 0 ]; then
+    echo "[entrypoint] WARNING: migrate failed (exit $MIGRATE_EXIT) — app will still start"
+fi
 
 # Cache
 php artisan config:cache
