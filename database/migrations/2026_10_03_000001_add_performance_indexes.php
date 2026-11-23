@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
+     * Disable wrapping in a transaction — PostgreSQL aborts the entire
+     * transaction on any error, which breaks subsequent hasTable() checks.
+     */
+    public bool $withinTransaction = false;
+    /**
      * Safely add index — driver-agnostic, skips if already exists.
      */
     private function addIndex(string $table, array|string $cols, string $name): void
