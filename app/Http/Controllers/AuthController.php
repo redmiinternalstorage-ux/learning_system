@@ -101,6 +101,9 @@ class AuthController extends Controller
             'role'     => $request->role,
         ]);
 
+        // Sync new user to Google Sheet
+        \App\Helpers\GoogleSheetHelper::syncUser($user, 'add');
+
         // Send welcome email — sync send so delivery is guaranteed
         try {
             MailLogger::log(
