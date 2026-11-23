@@ -206,6 +206,9 @@ class AdminController extends Controller
         $user->update($request->only('name', 'email', 'role'));
         ActivityLogger::log('user.updated', 'User', $user->id, $user->name, "Role: {$user->role}, Email: {$user->email}");
 
+        // Sync updated user to Google Sheet
+        \App\Helpers\GoogleSheetHelper::syncUser($user->fresh(), 'update');
+
         if ($request->filled('password')) {
             $request->validate(['password' => 'min:6']);
             $user->update(['password' => Hash::make($request->password)]);
@@ -232,9 +235,13 @@ class AdminController extends Controller
 
         $userName  = $user->name;
         $userEmail = $user->email;
+        $userId    = $user->id;
 
         $user->delete();
         ActivityLogger::log('user.deleted', 'User', null, $userName, "Email: {$userEmail}");
+
+        // Sync deletion to Google Sheet
+        \App\Helpers\GoogleSheetHelper::deleteUser($userId, $userEmail);
         // Send account deletion notification email
         MailLogger::log(
             'account_deleted',
@@ -437,6 +444,8 @@ class AdminController extends Controller
 
         if ($user->is_blocked) {
             ActivityLogger::log('user.blocked', 'User', $user->id, $user->name);
+            // Sync to Google Sheet
+            \App\Helpers\GoogleSheetHelper::syncUser($user->fresh(), 'update');
             // User was just blocked — send blocked notification
             MailLogger::log(
                 'account_blocked',
@@ -449,6 +458,8 @@ class AdminController extends Controller
             $msg = 'User blocked and notified via email.';
         } else {
             ActivityLogger::log('user.unblocked', 'User', $user->id, $user->name);
+            // Sync to Google Sheet
+            \App\Helpers\GoogleSheetHelper::syncUser($user->fresh(), 'update');
             // User was just unblocked — send restored notification
             MailLogger::log(
                 'account_unblocked',
@@ -462,6 +473,23 @@ class AdminController extends Controller
         }
 
         return back()->with('success', $msg);
+    }
+
+    /**
+     * Sync all users to Google Sheet (admin triggered)
+     */
+    public function syncAllToSheet()
+    {
+        $count = \App\Helpers\GoogleSheetHelper::syncAllUsers();
+        return back()->with('success', "✅ {$count} users synced to Google Sheet successfully.");
+    }
+
+    /**
+     * Redirect to Google Sheet
+     */
+    public function sheetLink()
+    {
+        return redirect('https://docs.google.com/spreadsheets/d/1ciY9HXAqaJZYLmsn2Fw-TPfkt626mA-XXgH4fI-JPlM/edit');
     }
 
     /**
