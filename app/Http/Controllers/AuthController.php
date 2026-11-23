@@ -94,17 +94,29 @@ class AuthController extends Controller
             'email.unique' => 'This email is already registered. Please login instead.',
         ]);
 
-        $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => $request->role,
-        ]);
+        try {
+            $user = User::create([
+                'name'     => $request->name,
+                'email'    => $request->email,
+                'password' => Hash::make($request->password),
+                'role'     => $request->role,
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Register failed: ' . $e->getMessage());
+            return back()->withErrors(['email' => 'Registration failed. Please try again in a moment.'])->withInput($request->except('password', 'password_confirmation'));
+        }
 
         // Sync new user to Google Sheet
-        \App\Helpers\GoogleSheetHelper::syncUser($user, 'add');
+        \App\Helpers\GoogleSheetHelper::sync('users', [
+            'id'            => $user->id,
+            'name'          => $user->name,
+            'email'         => $user->email,
+            'role'          => $user->role,
+            'status'        => 'active',
+            'registered_at' => $user->created_at->format('Y-m-d H:i:s'),
+        ], 'add');
 
-        // Send welcome email — sync send so delivery is guaranteed
+        // Send welcome email
         try {
             MailLogger::log(
                 'welcome',
