@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 class GoogleSheetHelper
 {
-    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbx2tPVuJqdRjHVpI_NueZRkNTH9vO87d9k1LcpDWrYvlAqXeuNuAuGWkSt9Yjv9KD0o/exec';
+    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbz5FgjQ_Q2qGcS2eppev4vCiFlkdH9sQ6F5BFDN8Oo3njXUAYfDDJxpXMfj8loKgbgF/exec';
 
     // ── Single row upsert ──────────────────────────────────────
     public static function sync(string $sheet, array $data, string $action = 'sync'): void
