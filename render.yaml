@@ -14,11 +14,11 @@ services:
         value: "false"
       - key: APP_KEY
         generateValue: true
-      # PostgreSQL external DB
+      # PostgreSQL external DB — permanent, never resets
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
-        value: dpg-dbv6jn8u01pc73cvlsf0-a
+        value: dpg-dbv6jn8u01pc73cvlsf0-a.oregon-postgres.render.com
       - key: DB_PORT
         value: "5432"
       - key: DB_DATABASE
@@ -27,6 +27,18 @@ services:
         value: db_mt56_user
       - key: DB_PASSWORD
         value: wcDzmgoffuZJTg1exS82NK4DWv5ZhXJZ
+      - key: DB_SSLMODE
+        value: require
       # Render URL — required for HTTPS session cookies
       - key: APP_URL
         value: https://learning-system-4.onrender.com
+      # Email — Render free plan blocks SMTP ports, so mail goes via Brevo's HTTPS API.
+      # Set the secret value in the Render dashboard (Environment tab).
+      - key: MAIL_MAILER
+        value: brevo
+      - key: BREVO_API_KEY
+        sync: false
+      - key: MAIL_FROM_ADDRESS
+        value: noreplychatzone@gmail.com
+      - key: MAIL_FROM_NAME
+        value: "Learning Curve"
