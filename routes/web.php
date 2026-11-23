@@ -110,6 +110,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/change-password',                              [AdminController::class, 'changePassword'])->name('change-password');
     Route::get('/users',                                         [AdminController::class, 'users'])->name('users');
     Route::post('/users/bulk',                                   [AdminController::class, 'bulkUsers'])->name('users.bulk');
+    Route::post('/users/sync-sheet',                             [AdminController::class, 'syncAllToSheet'])->name('users.sync-sheet');
+    Route::get('/users/sheet-link',                              [AdminController::class, 'sheetLink'])->name('users.sheet-link');
     Route::get('/users/{user}/detail',                           [AdminController::class, 'getUserDetail'])->name('users.detail');
     Route::get('/users/{user}/edit',                             [AdminController::class, 'editUser'])->name('users.edit');
     Route::put('/users/{user}',                                  [AdminController::class, 'updateUser'])->name('users.update');
