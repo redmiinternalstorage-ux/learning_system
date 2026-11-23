@@ -12,15 +12,19 @@ return new class extends Migration
      */
     private function addIndex(string $table, array|string $cols, string $name): void
     {
-        if (!Schema::hasTable($table)) {
-            return;
-        }
-
-        $driver = DB::getDriverName();
-
         try {
-            if ($driver === 'mysql' || $driver === 'mariadb') {
-                // Check information_schema — works on MySQL/MariaDB
+            if (!Schema::hasTable($table)) {
+                return;
+            }
+
+            $driver = DB::getDriverName();
+
+            if ($driver === 'pgsql') {
+                $exists = DB::select(
+                    "SELECT 1 FROM pg_indexes WHERE schemaname = current_schema() AND tablename = ? AND indexname = ?",
+                    [$table, $name]
+                );
+            } elseif ($driver === 'mysql' || $driver === 'mariadb') {
                 $exists = DB::select(
                     "SELECT 1 FROM information_schema.statistics
                      WHERE table_schema = DATABASE()
@@ -54,10 +58,10 @@ return new class extends Migration
      */
     private function dropIdx(string $table, string $name): void
     {
-        if (!Schema::hasTable($table)) {
-            return;
-        }
         try {
+            if (!Schema::hasTable($table)) {
+                return;
+            }
             Schema::table($table, fn(Blueprint $t) => $t->dropIndex($name));
         } catch (\Throwable $e) {
             // Index didn't exist — nothing to do
