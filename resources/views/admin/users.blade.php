@@ -5,6 +5,36 @@
 @section('content')
 <div class="space-y-5">
 
+    {{-- Google Sheet Sync Bar --}}
+    <div class="glass rounded-2xl p-4 border border-green-200 bg-green-50/50 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center">
+                <svg class="w-5 h-5 text-green-700" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-green-900">Google Sheet Sync</p>
+                <p class="text-xs text-green-700">Users are auto-synced on register/update/delete</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="https://docs.google.com/spreadsheets/d/1ciY9HXAqaJZYLmsn2Fw-TPfkt626mA-XXgH4fI-JPlM/edit"
+               target="_blank"
+               class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white border border-green-300 text-green-800 hover:bg-green-50 transition">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                Open Sheet
+            </a>
+            <form method="POST" action="{{ route('admin.users.sync-sheet') }}" class="inline">
+                @csrf
+                <button type="submit"
+                        onclick="return confirm('Sync all {{ \App\Models\User::count() }} users to Google Sheet?')"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-green-600 text-white hover:bg-green-700 transition">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+                    Sync All Users
+                </button>
+            </form>
+        </div>
+    </div>
+
     {{-- Search & Filter Bar --}}
     <div class="glass rounded-2xl p-4 border border-emerald-100">
         <form method="GET" action="{{ route('admin.users') }}" class="flex flex-col sm:flex-row flex-wrap gap-3 items-stretch sm:items-center">
