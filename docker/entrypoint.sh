@@ -78,11 +78,15 @@ done
 
 # Migrate — run without set -e so a failed migration doesn't kill the container
 set +e
-php artisan migrate --force
+php artisan migrate --force 2>&1
 MIGRATE_EXIT=$?
 set -e
 if [ $MIGRATE_EXIT -ne 0 ]; then
-    echo "[entrypoint] WARNING: migrate failed (exit $MIGRATE_EXIT) — app will still start"
+    echo "[entrypoint] WARNING: migrate failed (exit $MIGRATE_EXIT) — switching session to file driver"
+    # Patch .env to use file session so app doesn't crash with missing sessions table
+    sed -i 's/SESSION_DRIVER=database/SESSION_DRIVER=file/' .env
+else
+    echo "[entrypoint] migrate OK"
 fi
 
 # Cache
