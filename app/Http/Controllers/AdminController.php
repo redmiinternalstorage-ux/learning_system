@@ -476,12 +476,15 @@ class AdminController extends Controller
     }
 
     /**
-     * Sync all users to Google Sheet (admin triggered)
+     * Sync full DB to Google Sheet (admin triggered)
      */
     public function syncAllToSheet()
     {
-        $count = \App\Helpers\GoogleSheetHelper::syncAllUsers();
-        return back()->with('success', "✅ {$count} users synced to Google Sheet successfully.");
+        $results = \App\Helpers\GoogleSheetHelper::syncFullDB();
+        $total   = collect($results)->filter(fn($v) => is_int($v))->sum();
+        $summary = collect($results)->map(fn($v, $k) => "{$k}:{$v}")->implode(', ');
+        ActivityLogger::log('admin.sheet_sync', 'Sheet', null, 'Google Sheet', "Synced {$total} records — {$summary}");
+        return back()->with('success', "✅ Full DB synced to Google Sheet! ({$total} total records across " . count($results) . " sheets)");
     }
 
     /**
