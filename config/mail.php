@@ -40,11 +40,11 @@ return [
         'smtp' => [
             'transport'  => 'smtp',
             'host'       => env('MAIL_HOST', 'smtp.gmail.com'),
-            'port'       => env('MAIL_PORT', 587),
-            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+            'port'       => env('MAIL_PORT', 465),
+            'encryption' => env('MAIL_ENCRYPTION', 'ssl'),
             'username'   => env('MAIL_USERNAME'),
             'password'   => env('MAIL_PASSWORD'),
-            'timeout'    => 60,
+            'timeout'    => (int) env('MAIL_TIMEOUT', 30),
         ],
 
         'ses' => [
@@ -64,6 +64,12 @@ return [
             'key'       => env('RESEND_API_KEY'),
         ],
 
+        // HTTPS API (port 443) — use this on Render, which blocks SMTP ports
+        'brevo' => [
+            'transport' => 'brevo',
+            'key'       => env('BREVO_API_KEY'),
+        ],
+
         'sendmail' => [
             'transport' => 'sendmail',
             'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -bs -i'),
@@ -80,7 +86,9 @@ return [
 
         'failover' => [
             'transport' => 'failover',
-            'mailers'   => ['smtp', 'log'],
+            // Never fall back to 'log' — that writes the mail to a log file and
+            // reports success, so users see "sent" while nothing is delivered.
+            'mailers'   => ['brevo', 'smtp'],
             'retry_after' => 60,
         ],
 
