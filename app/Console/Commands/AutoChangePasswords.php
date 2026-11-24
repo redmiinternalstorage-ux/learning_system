@@ -48,10 +48,10 @@ class AutoChangePasswords extends Command
                 $user->email,
                 $user->name,
                 $user->id,
-                fn() => Mail::to($user->email)->send(new PasswordChangedMail(
+                fn() => new PasswordChangedMail(
                     $user->name,
                     now()->format('d M Y, h:i A')
-                )),
+                ),
                 'auto_schedule'
             );
 
