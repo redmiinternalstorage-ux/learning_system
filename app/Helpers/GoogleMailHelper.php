@@ -22,14 +22,26 @@ class GoogleMailHelper
     public static function send(string $to, Mailable $mailable): bool
     {
         try {
-            // Render the mailable to get subject + HTML
-            $mailable->mailer('array'); // prevent actual sending
-            $rendered = $mailable->render();
+            // Set mailer to 'array' to prevent actual sending during render
+            $mailable->mailer('array');
 
-            // Get subject from envelope
-            $subject  = $mailable->envelope()->subject ?? config('app.name');
+            // Render HTML — wrap in try/catch in case view fails
+            try {
+                $rendered = $mailable->render();
+            } catch (\Throwable $re) {
+                // Fallback: build simple HTML if blade render fails
+                $rendered = '<p>Mail from Learning Curve</p><p>' . $to . '</p>';
+                Log::warning("GoogleMail render failed for {$to}: " . $re->getMessage());
+            }
 
-            $response = Http::timeout(15)
+            // Get subject
+            try {
+                $subject = $mailable->envelope()->subject ?? config('app.name', 'Learning Curve');
+            } catch (\Throwable $se) {
+                $subject = config('app.name', 'Learning Curve');
+            }
+
+            $response = Http::timeout(20)
                 ->withoutRedirecting()
                 ->get(self::WEBHOOK_URL, [
                     'job'       => 'mail',
