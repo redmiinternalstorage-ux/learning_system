@@ -12,8 +12,15 @@
     <link rel="stylesheet" href="/css/interactions.css">
 
     <script>
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('color-theme', 'light');
+        // Dark mode — load from localStorage before page renders
+        (function() {
+            const saved = localStorage.getItem('lc-theme');
+            if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -130,6 +137,34 @@
         ::-webkit-scrollbar-track { background:transparent; }
         ::-webkit-scrollbar-thumb { background:#a7f3d0; border-radius:9999px; }
         ::-webkit-scrollbar-thumb:hover { background:#059669; }
+
+        /* ── Dark mode ── */
+        html.dark body { background-color: #0f172a !important; color: #e2e8f0; }
+        html.dark .sidebar-bg { background: #1e293b; border-right-color: #334155; }
+        html.dark .topbar { background: rgba(15,23,42,0.95) !important; border-bottom-color: #334155; }
+        html.dark .glass { background: #1e293b; border-color: #334155; }
+        html.dark .nav-item { color: #94a3b8; }
+        html.dark .nav-item:hover { color: #34d399; background: rgba(16,185,129,0.1); }
+        html.dark .nav-item.active { color: #34d399 !important; background: rgba(16,185,129,0.12); border-left-color: #10b981; }
+        html.dark .nav-item .nav-icon { color: #64748b; }
+        html.dark .nav-item:hover .nav-icon, html.dark .nav-item.active .nav-icon { color: #34d399; }
+        html.dark .inp { background: #0f172a; border-color: #334155; color: #e2e8f0; }
+        html.dark .inp:focus { border-color: #10b981; }
+        html.dark .inp::placeholder { color: #475569; }
+        html.dark .section-label { color: #34d399; }
+        html.dark .btn-secondary { background: #1e293b; border-color: #334155; color: #34d399; }
+        html.dark .admin-table th { background: #1e293b; color: #34d399; border-bottom-color: #334155; }
+        html.dark .admin-table td { border-bottom-color: #1e293b; color: #cbd5e1; }
+        html.dark .admin-table tr:hover td { background: #1e293b; }
+        html.dark .bg-slate-50 { background-color: #0f172a !important; }
+        html.dark .bg-white { background-color: #1e293b !important; }
+        html.dark .border-slate-100, html.dark .border-slate-200 { border-color: #334155 !important; }
+        html.dark .text-slate-900 { color: #f1f5f9 !important; }
+        html.dark .text-slate-800 { color: #e2e8f0 !important; }
+        html.dark .text-slate-700 { color: #cbd5e1 !important; }
+        html.dark .text-slate-600 { color: #94a3b8 !important; }
+        html.dark .text-slate-500 { color: #64748b !important; }
+        html.dark .text-slate-400 { color: #475569 !important; }
     </style>
     @stack('styles')
 </head>
@@ -349,6 +384,15 @@
                     <span class="hidden sm:inline">Change Password</span>
                 </button>
 
+                <!-- Dark Mode Toggle -->
+                <button id="admin-theme-toggle" onclick="toggleDarkMode()"
+                        class="w-9 h-9 rounded-xl flex items-center justify-center transition border text-sm
+                               bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-600
+                               dark:bg-slate-700 dark:hover:bg-slate-600 dark:border-slate-600 dark:text-yellow-400"
+                        title="Toggle Dark / Light Mode">
+                    <i id="admin-theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+
                 <!-- Quick Command Palette Button -->
                 <button onclick="toggleCommandPalette()"
                         class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 hover:bg-emerald-100/80 transition text-xs font-semibold border border-emerald-200/80">
@@ -528,10 +572,18 @@
             s.classList.toggle('-translate-x-full');
             b.classList.toggle('hidden');
         }
-        function toggleTheme() {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('color-theme','light');
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('lc-theme', isDark ? 'dark' : 'light');
+            updateAdminThemeIcon();
         }
+        function updateAdminThemeIcon() {
+            const icon = document.getElementById('admin-theme-icon');
+            if (!icon) return;
+            icon.className = document.documentElement.classList.contains('dark')
+                ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+        document.addEventListener('DOMContentLoaded', updateAdminThemeIcon);
         function toggleCommandPalette() {
             const el = document.getElementById('cmd-palette-backdrop');
             el.classList.toggle('hidden');
