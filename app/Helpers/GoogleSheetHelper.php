@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Log;
  */
 class GoogleSheetHelper
 {
-    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzvAktosuEVs_Tgr-N290i5BakQpZUid4wGwEfEYj0Iz_cJefw-0fYkhBowc2_hT_OJ/exec';
+    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbw6NJCSuJKD5E9b__hUpE4tnrKCO2EclR66WSe54JGS0DVwrKs1mOnZndgh-bUWqe2B/exec';
 
     // ── Single row upsert ──────────────────────────────────────
     public static function sync(string $sheet, array $data, string $action = 'sync'): void
