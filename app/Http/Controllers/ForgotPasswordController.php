@@ -49,7 +49,7 @@ class ForgotPasswordController extends Controller
                 $request->email,
                 $user->name,
                 $user->id,
-                fn() => Mail::to($request->email)->send(new OtpMail($otp, $user->name)),
+                fn() => new OtpMail($otp, $user->name),
                 'forgot_password',
                 ['otp_code' => $otp, 'otp_verified' => false]
             );
@@ -187,7 +187,7 @@ class ForgotPasswordController extends Controller
                 $email,
                 $user->name,
                 $user->id,
-                fn() => Mail::to($email)->send(new OtpMail($otp, $user->name)),
+                fn() => new OtpMail($otp, $user->name),
                 'forgot_password',
                 ['otp_code' => $otp, 'otp_verified' => false]
             );
