@@ -219,7 +219,7 @@ class AdminController extends Controller
                 $user->email,
                 $user->name,
                 $user->id,
-                fn() => Mail::to($user->email)->send(new PasswordChangedMail($user->name, now()->format('d M Y, h:i A'))),
+                fn() => new PasswordChangedMail($user->name, now()->format('d M Y, h:i A')),
                 'admin_action'
             );
         }
@@ -248,7 +248,7 @@ class AdminController extends Controller
             $userEmail,
             $userName,
             null,
-            fn() => Mail::to($userEmail)->send(new AccountDeletedMail($userName, $userEmail)),
+            fn() => new AccountDeletedMail($userName, $userEmail),
             'admin_action'
         );
 
@@ -452,7 +452,7 @@ class AdminController extends Controller
                 $user->email,
                 $user->name,
                 $user->id,
-                fn() => Mail::to($user->email)->send(new AccountBlockedMail($user->name, $user->email)),
+                fn() => new AccountBlockedMail($user->name, $user->email),
                 'admin_action'
             );
             $msg = 'User blocked and notified via email.';
@@ -466,7 +466,7 @@ class AdminController extends Controller
                 $user->email,
                 $user->name,
                 $user->id,
-                fn() => Mail::to($user->email)->send(new AccountUnblockedMail($user->name, $user->email)),
+                fn() => new AccountUnblockedMail($user->name, $user->email),
                 'admin_action'
             );
             $msg = 'User unblocked and notified via email.';
