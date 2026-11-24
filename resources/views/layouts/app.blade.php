@@ -11,8 +11,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="/css/interactions.css">
     <script>
-        // Always light mode for student portal
-        document.documentElement.classList.remove('dark');
+        // Dark mode — load from localStorage before page renders (prevents flash)
+        (function() {
+            const saved = localStorage.getItem('lc-theme');
+            if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -83,6 +90,21 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #a7f3d0; border-radius: 9999px; }
         ::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* ── Dark mode ── */
+        html.dark body { background-color: #0f172a; color: #e2e8f0; }
+        html.dark .sidebar { background: #1e293b; border-right-color: #334155; }
+        html.dark .sidebar-brand { background: linear-gradient(135deg,#1e293b,#0f172a); border-bottom-color: #334155; }
+        html.dark .topbar { background: rgba(15,23,42,0.95); border-bottom-color: #334155; }
+        html.dark .nav-link { color: #94a3b8; }
+        html.dark .nav-link:hover { color: #34d399; background: rgba(16,185,129,0.1); }
+        html.dark .nav-link.active { color: #34d399 !important; background: rgba(16,185,129,0.12); border-left-color: #10b981; }
+        html.dark .nav-link .icon { color: #64748b; }
+        html.dark .nav-link:hover .icon, html.dark .nav-link.active .icon { color: #34d399; }
+        html.dark .inp { background: #1e293b; border-color: #334155; color: #e2e8f0; }
+        html.dark .inp:focus { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,0.15); }
+        html.dark .inp::placeholder { color: #475569; }
+        html.dark .section-label { color: #34d399; }
 
         /* ── Shared input style ── */
         .inp {
@@ -265,6 +287,14 @@
                class="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold transition border border-emerald-100">
                 <i class="fa-solid fa-compass text-xs"></i> Explore
             </a>
+            {{-- Dark mode toggle --}}
+            <button id="theme-toggle" onclick="toggleDarkMode()"
+                    class="w-9 h-9 rounded-xl flex items-center justify-center transition border text-sm
+                           bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-600
+                           dark:bg-slate-700 dark:hover:bg-slate-600 dark:border-slate-600 dark:text-yellow-400"
+                    title="Toggle Dark Mode">
+                <i id="theme-icon" class="fa-solid fa-moon dark:fa-sun"></i>
+            </button>
             {{-- Avatar --}}
             <div class="flex items-center gap-2.5">
                 <a href="{{ route('profile') }}" class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm shadow-sm shadow-emerald-500/20 hover:shadow-md transition">
@@ -387,6 +417,24 @@ function toggleSidebar() {
     s.classList.toggle('-translate-x-full');
     b.classList.toggle('hidden');
 }
+
+function toggleDarkMode() {
+    const html = document.documentElement;
+    const isDark = html.classList.toggle('dark');
+    localStorage.setItem('lc-theme', isDark ? 'dark' : 'light');
+    updateThemeIcon();
+}
+
+function updateThemeIcon() {
+    const icon = document.getElementById('theme-icon');
+    if (!icon) return;
+    if (document.documentElement.classList.contains('dark')) {
+        icon.className = 'fa-solid fa-sun';
+    } else {
+        icon.className = 'fa-solid fa-moon';
+    }
+}
+document.addEventListener('DOMContentLoaded', updateThemeIcon);
 
 function openUserDataModal() {
     document.getElementById('userDataModal').classList.remove('hidden');
