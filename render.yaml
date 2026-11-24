@@ -32,15 +32,13 @@ services:
       # Render URL — required for HTTPS session cookies
       - key: APP_URL
         value: https://learning-system-4.onrender.com
-      # Resend email delivery (HTTPS API - works on Render free tier)
+      # Mail via Google Apps Script (no SMTP needed)
       - key: MAIL_MAILER
-        value: resend
+        value: log
       - key: MAIL_FROM_ADDRESS
-        value: onboarding@resend.dev
+        value: chatzonehelp@gmail.com
       - key: MAIL_FROM_NAME
         value: "Learning Curve"
-      - key: RESEND_API_KEY
-        value: SET_IN_RENDER_DASHBOARD
       # Email — Render free plan blocks SMTP ports, so mail goes via Brevo's HTTPS API.
       # Set the secret value in the Render dashboard (Environment tab).
       - key: MAIL_MAILER
