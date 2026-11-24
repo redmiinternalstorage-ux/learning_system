@@ -18,37 +18,19 @@ return new class extends Migration
     private function addIndex(string $table, array|string $cols, string $name): void
     {
         try {
-            if (!Schema::hasTable($table)) {
-                return;
-            }
+            // Use raw pg_class query — avoids Schema::hasTable in transaction context
+            $tableExists = DB::selectOne(
+                "SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+                 WHERE n.nspname = current_schema() AND c.relname = ? AND c.relkind IN ('r','p')",
+                [$table]
+            );
+            if (!$tableExists) return;
 
-            $driver = DB::getDriverName();
-
-            if ($driver === 'pgsql') {
-                $exists = DB::select(
-                    "SELECT 1 FROM pg_indexes WHERE schemaname = current_schema() AND tablename = ? AND indexname = ?",
-                    [$table, $name]
-                );
-            } elseif ($driver === 'mysql' || $driver === 'mariadb') {
-                $exists = DB::select(
-                    "SELECT 1 FROM information_schema.statistics
-                     WHERE table_schema = DATABASE()
-                       AND table_name = ?
-                       AND index_name = ?
-                     LIMIT 1",
-                    [$table, $name]
-                );
-            } else {
-                // SQLite fallback
-                $exists = DB::select(
-                    "SELECT 1 FROM sqlite_master WHERE type='index' AND name=?",
-                    [$name]
-                );
-            }
-
-            if (!empty($exists)) {
-                return;
-            }
+            $exists = DB::selectOne(
+                "SELECT 1 FROM pg_indexes WHERE schemaname = current_schema() AND tablename = ? AND indexname = ?",
+                [$table, $name]
+            );
+            if ($exists) return;
 
             Schema::table($table, function (Blueprint $t) use ($cols, $name) {
                 $t->index($cols, $name);
