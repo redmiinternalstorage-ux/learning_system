@@ -42,13 +42,13 @@ class AdminMailController extends Controller
                 $user->email,
                 $user->name,
                 $user->id,
-                fn() => Mail::to($user->email)->send(new AdminDirectMail(
+                fn() => new AdminDirectMail(
                     recipientName: $user->name,
                     mailSubject:   $request->subject,
                     messageBody:   $request->message,
                     ctaLabel:      $request->cta_label ?: null,
                     ctaUrl:        $request->cta_url   ?: null,
-                )),
+                ),
                 'admin_direct'
             );
 
@@ -107,19 +107,24 @@ class AdminMailController extends Controller
 
         $logs = $query->paginate(20)->withQueryString();
 
-        // Stats per type — MySQL-safe aggregate
-        $typeCounts = MailLog::selectRaw('mail_type, COUNT(*) as total, SUM(success = 1) as sent_ok, SUM(success = 0) as failed')
+        // Stats per type — PostgreSQL compatible aggregate
+        $typeCounts = MailLog::selectRaw(
+            "mail_type,
+             COUNT(*) as total,
+             SUM(CASE WHEN success=true THEN 1 ELSE 0 END) as sent_ok,
+             SUM(CASE WHEN success=false THEN 1 ELSE 0 END) as failed"
+        )
             ->groupBy('mail_type')
             ->get()
             ->keyBy('mail_type');
 
-        // Single aggregate instead of 5 separate COUNT queries
+        // Single aggregate
         $agg = MailLog::selectRaw(
             "COUNT(*) as total,
-             SUM(CASE WHEN success=1 THEN 1 ELSE 0 END) as success_count,
-             SUM(CASE WHEN success=0 THEN 1 ELSE 0 END) as failed_count,
-             SUM(CASE WHEN mail_type IN ('otp','otp_resend') AND otp_verified=1 THEN 1 ELSE 0 END) as otp_ok,
-             SUM(CASE WHEN mail_type IN ('otp','otp_resend') AND (otp_verified=0 OR otp_verified IS NULL) THEN 1 ELSE 0 END) as otp_pending"
+             SUM(CASE WHEN success=true  THEN 1 ELSE 0 END) as success_count,
+             SUM(CASE WHEN success=false THEN 1 ELSE 0 END) as failed_count,
+             SUM(CASE WHEN mail_type IN ('otp','otp_resend') AND otp_verified=true  THEN 1 ELSE 0 END) as otp_ok,
+             SUM(CASE WHEN mail_type IN ('otp','otp_resend') AND (otp_verified=false OR otp_verified IS NULL) THEN 1 ELSE 0 END) as otp_pending"
         )->first();
 
         $overallStats = [
