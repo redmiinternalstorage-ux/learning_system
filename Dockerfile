@@ -29,7 +29,9 @@ RUN COMPOSER_MEMORY_LIMIT=-1 composer install \
     --no-interaction \
     --prefer-dist \
     --optimize-autoloader \
-    --no-scripts
+    --no-scripts \
+    --no-plugins \
+    --no-cache
 
 COPY . .
 COPY --from=frontend /app/public/build ./public/build
