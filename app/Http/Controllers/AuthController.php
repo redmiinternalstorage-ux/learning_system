@@ -123,7 +123,7 @@ class AuthController extends Controller
                 $user->email,
                 $user->name,
                 $user->id,
-                fn() => \Mail::to($user->email)->send(new \App\Mail\WelcomeMail($user)),
+                fn() => new \App\Mail\WelcomeMail($user),
                 'registration'
             );
         } catch (\Throwable $e) {
