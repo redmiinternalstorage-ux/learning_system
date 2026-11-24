@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 // Auto-change scheduled passwords every day at midnight
 Schedule::command('passwords:auto-change')->dailyAt('00:01');
+
+// Auto-sync full DB to Google Sheets every 5 minutes
+Schedule::command('sheets:sync')->everyFiveMinutes()->withoutOverlapping();
