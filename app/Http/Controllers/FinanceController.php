@@ -384,7 +384,7 @@ class FinanceController extends Controller
                     $staff->email,
                     $staff->name,
                     $staff->id,
-                    fn() => Mail::to($staff->email)->send(new SalaryPaidMail(
+                    fn() => new SalaryPaidMail(
                         staffName:   $staff->name,
                         period:      $request->period_label,
                         amount:      (string) $amount,
@@ -392,7 +392,7 @@ class FinanceController extends Controller
                         hoursWorked: (int) ceil($hours),
                         paidBy:      Auth::user()->name,
                         notes:       $request->notes ?? '',
-                    )),
+                    ),
                     'finance'
                 );
                 $salaryPayment->update(['mail_sent' => true]);
@@ -653,9 +653,7 @@ class FinanceController extends Controller
             $targetEmail,
             'AK Patel (Admin)',
             $user->id,
-            fn() => \Illuminate\Support\Facades\Mail::to($targetEmail)->send(
-                new \App\Mail\FinanceSheetMail($user->name, $data, $pdfBytes, $user->name)
-            ),
+            fn() => new \App\Mail\FinanceSheetMail($user->name, $data, $pdfBytes, $user->name),
             'finance_export'
         );
 
