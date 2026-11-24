@@ -7,12 +7,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    public bool $withinTransaction = false;
+
     private function addIndex(string $table, array|string $cols, string $name): void
     {
-        if (!Schema::hasTable($table)) return;
-        $driver = DB::getDriverName();
         try {
-            if (in_array($driver, ['mysql', 'mariadb'])) {
+            if (!Schema::hasTable($table)) return;
+            $driver = DB::getDriverName();
+            if ($driver === 'pgsql') {
+                $exists = DB::select(
+                    "SELECT 1 FROM pg_indexes WHERE schemaname=current_schema() AND tablename=? AND indexname=?",
+                    [$table, $name]
+                );
+            } elseif (in_array($driver, ['mysql', 'mariadb'])) {
                 $exists = DB::select(
                     "SELECT 1 FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name=? AND index_name=? LIMIT 1",
                     [$table, $name]
