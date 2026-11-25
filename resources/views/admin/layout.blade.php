@@ -272,8 +272,14 @@
             <a href="{{ route('finance.dashboard') }}" class="nav-item {{ request()->routeIs('finance*') ? 'active' : '' }}">
                 <i class="nav-icon fa-solid fa-building-columns"></i> Finance Dept
             </a>
+            <a href="{{ route('admin.campus.index') }}" class="nav-item {{ request()->routeIs('admin.campus*') ? 'active' : '' }}">
+                <i class="nav-icon fa-solid fa-graduation-cap text-emerald-500"></i> Campus Program
+                @php $campusPending = \Illuminate\Support\Facades\Cache::remember('campus_pending_count', 60, fn() => \App\Models\CampusStudent::where('status','pending')->count()); @endphp
+                @if($campusPending > 0)
+                <span class="ml-auto text-[8px] font-black bg-emerald-500 text-white px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $campusPending }}</span>
+                @endif
+            </a>
             @endif
-
             <div class="my-3 border-t border-slate-100"></div>
             <p class="section-label px-2 mb-2">Live Stats</p>
 
