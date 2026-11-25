@@ -151,6 +151,12 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; overflow-
                     <span class="hidden sm:inline font-bold">Dashboard</span>
                 </a>
             @else
+                {{-- Campus Portal Button --}}
+                <a href="{{ route('campus.home') }}"
+                   class="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-sm transition-all duration-200">
+                    <i class="fa-solid fa-graduation-cap text-xs"></i>
+                    <span>Campus</span>
+                </a>
                 {{-- Login Button --}}
                 <a href="{{ route('login') }}"
                    class="hidden sm:flex items-center gap-2.5 px-5 py-2.5 rounded-2xl border-2 border-emerald-200 bg-white hover:bg-emerald-50 hover:border-emerald-400 text-emerald-700 font-bold text-sm transition-all duration-200 group">
