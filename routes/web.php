@@ -253,3 +253,48 @@ Route::middleware(['auth', 'finance'])->prefix('finance')->name('finance.')->gro
     Route::get('/history',                              [\App\Http\Controllers\FinanceController::class, 'history'])->name('history');
     Route::post('/export-sheet',                        [\App\Http\Controllers\FinanceController::class, 'exportSheet'])->name('export-sheet');
 });
+
+// ══════════════════════════════════════════════════════════════
+//  CAMPUS LEARNING PROGRAM
+// ══════════════════════════════════════════════════════════════
+
+// Campus Guest routes
+Route::prefix('campus')->name('campus.')->group(function () {
+    Route::get('/',          [\App\Http\Controllers\CampusController::class, 'landing'])->name('home');
+    Route::get('/login',     [\App\Http\Controllers\CampusController::class, 'showLogin'])->name('login');
+    Route::post('/login',    [\App\Http\Controllers\CampusController::class, 'login'])->name('login.post');
+    Route::get('/register',  [\App\Http\Controllers\CampusController::class, 'showRegister'])->name('register');
+    Route::post('/register', [\App\Http\Controllers\CampusController::class, 'register'])->name('register.post');
+    Route::get('/verify-email',  [\App\Http\Controllers\CampusController::class, 'showVerifyEmail'])->name('verify-email');
+    Route::post('/verify-email', [\App\Http\Controllers\CampusController::class, 'verifyEmail'])->name('verify-email.post');
+    Route::post('/resend-otp',   [\App\Http\Controllers\CampusController::class, 'resendOtp'])->name('resend-otp');
+    Route::post('/logout',       [\App\Http\Controllers\CampusController::class, 'logout'])->name('logout');
+});
+
+// Campus Authenticated routes
+Route::prefix('campus')->name('campus.')->middleware('campus')->group(function () {
+    Route::get('/dashboard',                        [\App\Http\Controllers\CampusController::class, 'dashboard'])->name('dashboard');
+    Route::get('/courses',                          [\App\Http\Controllers\CampusController::class, 'courses'])->name('courses');
+    Route::post('/courses/{course}/enroll',         [\App\Http\Controllers\CampusController::class, 'enroll'])->name('enroll');
+    Route::get('/courses/{course}',                 [\App\Http\Controllers\CampusController::class, 'courseDetail'])->name('course-detail');
+    Route::post('/courses/{course}/progress',       [\App\Http\Controllers\CampusController::class, 'updateProgress'])->name('update-progress');
+    Route::get('/progress',                         [\App\Http\Controllers\CampusController::class, 'progress'])->name('progress');
+    Route::get('/leaderboard',                      [\App\Http\Controllers\CampusController::class, 'leaderboard'])->name('leaderboard');
+    Route::get('/profile',                          [\App\Http\Controllers\CampusController::class, 'profile'])->name('profile');
+    Route::post('/profile',                         [\App\Http\Controllers\CampusController::class, 'updateProfile'])->name('profile.update');
+});
+
+// Admin Campus Management
+Route::middleware(['auth', 'admin'])->prefix('admin/campus')->name('admin.campus.')->group(function () {
+    Route::get('/',                                     [\App\Http\Controllers\AdminCampusController::class, 'index'])->name('index');
+    Route::get('/students',                             [\App\Http\Controllers\AdminCampusController::class, 'students'])->name('students');
+    Route::get('/students/{student}',                   [\App\Http\Controllers\AdminCampusController::class, 'showStudent'])->name('students.show');
+    Route::post('/students/{student}/approve',          [\App\Http\Controllers\AdminCampusController::class, 'approve'])->name('students.approve');
+    Route::post('/students/{student}/reject',           [\App\Http\Controllers\AdminCampusController::class, 'reject'])->name('students.reject');
+    Route::delete('/students/{student}',                [\App\Http\Controllers\AdminCampusController::class, 'deleteStudent'])->name('students.delete');
+    Route::get('/domains',                              [\App\Http\Controllers\AdminCampusController::class, 'domains'])->name('domains');
+    Route::post('/domains',                             [\App\Http\Controllers\AdminCampusController::class, 'storeDomain'])->name('domains.store');
+    Route::post('/domains/{domain}/toggle',             [\App\Http\Controllers\AdminCampusController::class, 'toggleDomain'])->name('domains.toggle');
+    Route::delete('/domains/{domain}',                  [\App\Http\Controllers\AdminCampusController::class, 'deleteDomain'])->name('domains.delete');
+    Route::get('/analytics',                            [\App\Http\Controllers\AdminCampusController::class, 'analytics'])->name('analytics');
+});
