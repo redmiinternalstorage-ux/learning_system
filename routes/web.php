@@ -102,6 +102,9 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/select-panel',     [\App\Http\Controllers\StaffController::class, 'panelSelect'])->name('admin.panel-select');
     Route::post('/verify-department', [\App\Http\Controllers\AdminAuthController::class, 'verifyDepartment'])->name('admin.verify-department');
     Route::get('/switch-department', [\App\Http\Controllers\AdminAuthController::class, 'switchDepartment'])->name('admin.switch-department');
+
+    // Stop Impersonation — accessible while logged in as student
+    Route::get('/impersonate/stop',  [\App\Http\Controllers\AdminImpersonateController::class, 'stopImpersonation'])->name('admin.impersonate.stop');
 });
 
 // Admin Department (requires active 'admin' department session)
@@ -209,6 +212,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::post('/staff/{staff}/toggle-block', [\App\Http\Controllers\StaffController::class, 'toggleBlock'])->name('staff.toggle-block');
         Route::delete('/staff/{staff}',            [\App\Http\Controllers\StaffController::class, 'destroy'])->name('staff.destroy');
     });
+
+    // Impersonation — Start (admin only, requires admin department session)
+    Route::post('/users/{user}/impersonate', [\App\Http\Controllers\AdminImpersonateController::class, 'impersonate'])->name('impersonate.start');
 });
 
 // ── Staff Portal (staff role only) ───────────────────────────────────────────
