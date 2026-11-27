@@ -480,11 +480,15 @@ class AdminController extends Controller
      */
     public function syncAllToSheet()
     {
-        $results = \App\Helpers\GoogleSheetHelper::syncFullDB();
-        $total   = collect($results)->filter(fn($v) => is_int($v))->sum();
-        $summary = collect($results)->map(fn($v, $k) => "{$k}:{$v}")->implode(', ');
-        ActivityLogger::log('admin.sheet_sync', 'Sheet', null, 'Google Sheet', "Synced {$total} records — {$summary}");
-        return back()->with('success', "✅ Full DB synced to Google Sheet! ({$total} total records across " . count($results) . " sheets)");
+        try {
+            $results = \App\Helpers\GoogleSheetHelper::syncFullDB();
+            $total   = collect($results)->filter(fn($v) => is_int($v))->sum();
+            $summary = collect($results)->map(fn($v, $k) => "{$k}:{$v}")->implode(', ');
+            ActivityLogger::log('admin.sheet_sync', 'Sheet', null, 'Google Sheet', "Synced {$total} records — {$summary}");
+            return back()->with('success', "✅ Full DB synced to Google Sheet! ({$total} total records across " . count($results) . " sheets)");
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Google Sheet sync failed: ' . $e->getMessage());
+        }
     }
 
     /**
