@@ -200,14 +200,14 @@ class AdminController extends Controller
         $request->validate([
             'name'  => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$user->id,
-            'role'  => 'required|in:student,instructor,admin,staff',
+            'role'  => 'required|in:student,instructor,admin,staff,finance',
         ]);
 
         $user->update($request->only('name', 'email', 'role'));
         ActivityLogger::log('user.updated', 'User', $user->id, $user->name, "Role: {$user->role}, Email: {$user->email}");
 
-        // Sync updated user to Google Sheet
-        \App\Helpers\GoogleSheetHelper::syncUser($user->fresh(), 'update');
+        // Sync updated user to Google Sheet (non-blocking)
+        try { \App\Helpers\GoogleSheetHelper::syncUser($user->fresh(), 'update'); } catch (\Throwable $e) {}
 
         if ($request->filled('password')) {
             $request->validate(['password' => 'min:6']);
@@ -240,8 +240,8 @@ class AdminController extends Controller
         $user->delete();
         ActivityLogger::log('user.deleted', 'User', null, $userName, "Email: {$userEmail}");
 
-        // Sync deletion to Google Sheet
-        \App\Helpers\GoogleSheetHelper::deleteUser($userId, $userEmail);
+        // Sync deletion to Google Sheet (non-blocking)
+        try { \App\Helpers\GoogleSheetHelper::deleteUser($userId, $userEmail); } catch (\Throwable $e) {}
         // Send account deletion notification email
         MailLogger::log(
             'account_deleted',
@@ -444,8 +444,8 @@ class AdminController extends Controller
 
         if ($user->is_blocked) {
             ActivityLogger::log('user.blocked', 'User', $user->id, $user->name);
-            // Sync to Google Sheet
-            \App\Helpers\GoogleSheetHelper::syncUser($user->fresh(), 'update');
+            // Sync to Google Sheet (non-blocking)
+            try { \App\Helpers\GoogleSheetHelper::syncUser($user->fresh(), 'update'); } catch (\Throwable $e) {}
             // User was just blocked — send blocked notification
             MailLogger::log(
                 'account_blocked',
@@ -458,8 +458,8 @@ class AdminController extends Controller
             $msg = 'User blocked and notified via email.';
         } else {
             ActivityLogger::log('user.unblocked', 'User', $user->id, $user->name);
-            // Sync to Google Sheet
-            \App\Helpers\GoogleSheetHelper::syncUser($user->fresh(), 'update');
+            // Sync to Google Sheet (non-blocking)
+            try { \App\Helpers\GoogleSheetHelper::syncUser($user->fresh(), 'update'); } catch (\Throwable $e) {}
             // User was just unblocked — send restored notification
             MailLogger::log(
                 'account_unblocked',
