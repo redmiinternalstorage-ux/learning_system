@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'finance'    => \App\Http\Middleware\FinanceMiddleware::class,
             'staff'      => \App\Http\Middleware\StaffMiddleware::class,
             'campus'     => \App\Http\Middleware\CampusMiddleware::class,
+            'college'    => \App\Http\Middleware\CollegeMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
