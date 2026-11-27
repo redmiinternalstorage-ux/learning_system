@@ -335,6 +335,34 @@
     @endif
 
     <main class="flex-1 p-5 lg:p-6">
+        {{-- Impersonation Banner — shown when admin is viewing as another user --}}
+        @if(session('impersonating_admin_id'))
+        <div class="mb-5 flex items-center gap-3 p-4 rounded-2xl bg-violet-600 text-white shadow-lg shadow-violet-500/30 border border-violet-500">
+            <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-eye text-sm"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="font-bold text-sm">Viewing as: <span class="font-black">{{ Auth::user()->name }}</span>
+                    <span class="text-violet-200 font-normal">({{ Auth::user()->email }})</span>
+                </p>
+                <p class="text-violet-200 text-xs mt-0.5">You are in impersonation mode. Any actions you take are real.</p>
+            </div>
+            <a href="{{ route('admin.impersonate.stop') }}"
+               class="flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-violet-700 font-bold text-xs hover:bg-violet-50 transition shadow-sm">
+                <i class="fa-solid fa-arrow-left-to-bracket"></i>
+                Return to Admin
+            </a>
+        </div>
+        @endif
+
+        {{-- Flash notification from impersonation start --}}
+        @if(session('impersonation_notice'))
+        <div class="mb-5 flex items-start gap-3 p-4 rounded-2xl bg-violet-50 border border-violet-200 text-violet-800 text-xs font-semibold">
+            <i class="fa-solid fa-eye text-violet-500 flex-shrink-0 mt-0.5"></i>
+            <span>{!! session('impersonation_notice') !!}</span>
+        </div>
+        @endif
+
         @yield('content')
     </main>
 </div>
