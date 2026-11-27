@@ -162,6 +162,8 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; }
         <a href="{{ route('home') }}" class="hover:text-emerald-300 transition">← Back to main website</a>
         &nbsp;•&nbsp;
         <a href="{{ route('login') }}" class="hover:text-emerald-300 transition">Student login</a>
+        &nbsp;•&nbsp;
+        <a href="{{ route('college.login') }}" class="hover:text-emerald-300 transition">🏛️ College Admin</a>
     </p>
 </div>
 
