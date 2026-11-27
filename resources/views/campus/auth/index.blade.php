@@ -122,23 +122,6 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; }
                         <p class="text-emerald-400/70 text-[10px] mt-1">Must be your official college email (admin-verified domain)</p>
                         @error('college_email')<p class="text-rose-400 text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-bold text-emerald-300 mb-1.5">Student ID</label>
-                            <input type="text" name="student_id" value="{{ old('student_id') }}"
-                                   class="inp" placeholder="Roll number">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-emerald-300 mb-1.5">Semester</label>
-                            <input type="text" name="semester" value="{{ old('semester') }}"
-                                   class="inp" placeholder="e.g. 3rd Sem">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-emerald-300 mb-1.5">Department</label>
-                        <input type="text" name="department" value="{{ old('department') }}"
-                               class="inp" placeholder="e.g. Computer Science">
-                    </div>
                     <div>
                         <label class="block text-xs font-bold text-emerald-300 mb-1.5">Password</label>
                         <input type="password" name="password" class="inp" placeholder="Min 8 characters" required>
