@@ -26,7 +26,7 @@
             <form method="POST" action="{{ route('admin.users.sync-sheet') }}" class="inline">
                 @csrf
                 <button type="submit"
-                        onclick="return confirm('Sync all {{ \App\Models\User::count() }} users to Google Sheet?')"
+                        onclick="return confirm('Sync all users to Google Sheet?')"
                         class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-green-600 text-white hover:bg-green-700 transition">
                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
                     Sync All Users
