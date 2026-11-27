@@ -106,8 +106,8 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'Registration failed. Please try again in a moment.'])->withInput($request->except('password', 'password_confirmation'));
         }
 
-        // Sync new user to Google Sheet
-        \App\Helpers\GoogleSheetHelper::syncUser($user, 'add');
+        // Sync new user to Google Sheet (non-blocking)
+        try { \App\Helpers\GoogleSheetHelper::syncUser($user, 'add'); } catch (\Throwable $e) {}
 
         // Send welcome email
         try {
