@@ -1,7 +1,11 @@
 @php
-    $currentAd = \Illuminate\Support\Facades\Cache::remember('active_ad_overlay', 120, function () {
-        return \App\Models\Ad::active()->latest()->first();
-    });
+    try {
+        $currentAd = \Illuminate\Support\Facades\Cache::remember('active_ad_overlay', 120, function () {
+            return \App\Models\Ad::active()->latest()->first();
+        });
+    } catch (\Throwable $e) {
+        $currentAd = null;
+    }
 @endphp
 
 @if($currentAd)
