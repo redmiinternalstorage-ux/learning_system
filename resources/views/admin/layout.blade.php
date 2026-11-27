@@ -226,7 +226,11 @@
             @if(Auth::user()->isAdmin())
             <a href="{{ route('admin.staff.index') }}" class="nav-item {{ request()->routeIs('admin.staff*') ? 'active' : '' }}">
                 <i class="nav-icon fa-solid fa-user-tie"></i> Staff Admin
-                @php $staffCount = \Illuminate\Support\Facades\Cache::remember('sidebar_staff_count', 60, fn() => \App\Models\User::where('role','staff')->count()); @endphp
+                @php
+                    $staffCount = \Illuminate\Support\Facades\Cache::remember('sidebar_staff_count', 60, function() {
+                        try { return \App\Models\User::where('role','staff')->count(); } catch(\Throwable $e) { return 0; }
+                    });
+                @endphp
                 @if($staffCount > 0)
                 <span class="ml-auto text-[8px] font-black bg-emerald-600 text-white px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $staffCount }}</span>
                 @endif
@@ -263,7 +267,11 @@
             </a>
             <a href="{{ route('admin.support.index') }}" class="nav-item {{ request()->routeIs('admin.support*') || request()->routeIs('admin.chat*') ? 'active' : '' }}">
                 <i class="nav-icon fa-solid fa-headset"></i> Help & Support Center
-                @php $unread = \Illuminate\Support\Facades\Cache::remember('sidebar_unread_tickets', 30, fn() => \App\Models\SupportTicket::where('admin_read',false)->count()); @endphp
+                @php
+                    $unread = \Illuminate\Support\Facades\Cache::remember('sidebar_unread_tickets', 30, function() {
+                        try { return \App\Models\SupportTicket::where('admin_read',false)->count(); } catch(\Throwable $e) { return 0; }
+                    });
+                @endphp
                 @if($unread > 0)
                 <span class="ml-auto text-[8px] font-black bg-rose-500 text-white px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $unread }}</span>
                 @endif
@@ -274,14 +282,22 @@
             </a>
             <a href="{{ route('admin.campus.index') }}" class="nav-item {{ request()->routeIs('admin.campus*') ? 'active' : '' }}">
                 <i class="nav-icon fa-solid fa-graduation-cap text-emerald-500"></i> Campus Program
-                @php $campusPending = \Illuminate\Support\Facades\Cache::remember('campus_pending_count', 60, fn() => \App\Models\CampusStudent::where('status','pending')->count()); @endphp
+                @php
+                    $campusPending = \Illuminate\Support\Facades\Cache::remember('campus_pending_count', 60, function() {
+                        try { return \App\Models\CampusStudent::where('status','pending')->count(); } catch(\Throwable $e) { return 0; }
+                    });
+                @endphp
                 @if($campusPending > 0)
                 <span class="ml-auto text-[8px] font-black bg-emerald-500 text-white px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $campusPending }}</span>
                 @endif
             </a>
             <a href="{{ route('admin.colleges.index') }}" class="nav-item {{ request()->routeIs('admin.colleges*') ? 'active' : '' }}">
                 <i class="nav-icon fa-solid fa-building-columns text-indigo-500"></i> College Accounts
-                @php $collegePending = \Illuminate\Support\Facades\Cache::remember('college_pending_count', 60, fn() => \App\Models\CollegeAdmin::where('status','pending')->count()); @endphp
+                @php
+                    $collegePending = \Illuminate\Support\Facades\Cache::remember('college_pending_count', 60, function() {
+                        try { return \App\Models\CollegeAdmin::where('status','pending')->count(); } catch(\Throwable $e) { return 0; }
+                    });
+                @endphp
                 @if($collegePending > 0)
                 <span class="ml-auto text-[8px] font-black bg-indigo-500 text-white px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $collegePending }}</span>
                 @endif
@@ -291,26 +307,31 @@
             <p class="section-label px-2 mb-2">Live Stats</p>
 
             <div class="mx-1 rounded-2xl bg-emerald-50/60 border border-emerald-100 p-4 space-y-3">
+                @php
+                    try { $sUserCount   = \Illuminate\Support\Facades\Cache::remember('sidebar_user_count', 60, fn() => \App\Models\User::count()); } catch(\Throwable $e) { $sUserCount = '—'; }
+                    try { $sCourseCount = \Illuminate\Support\Facades\Cache::remember('sidebar_course_count', 60, fn() => \App\Models\Course::count()); } catch(\Throwable $e) { $sCourseCount = '—'; }
+                    try { $sPending     = \Illuminate\Support\Facades\Cache::remember('sidebar_pending_count', 30, fn() => \App\Models\TaskSubmission::where('status','pending')->count()); } catch(\Throwable $e) { $sPending = '—'; }
+                @endphp
                 <div class="flex justify-between items-center">
                     <div class="flex items-center gap-2 text-slate-600">
                         <i class="fa-solid fa-users text-[10px] text-emerald-600"></i>
                         <span class="text-[10px] font-bold">Users</span>
                     </div>
-                    <span class="text-emerald-900 font-black text-sm font-outfit">{{ \Illuminate\Support\Facades\Cache::remember('sidebar_user_count', 60, fn() => \App\Models\User::count()) }}</span>
+                    <span class="text-emerald-900 font-black text-sm font-outfit">{{ $sUserCount }}</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <div class="flex items-center gap-2 text-slate-600">
                         <i class="fa-solid fa-book text-[10px] text-teal-600"></i>
                         <span class="text-[10px] font-bold">Courses</span>
                     </div>
-                    <span class="text-emerald-900 font-black text-sm font-outfit">{{ \Illuminate\Support\Facades\Cache::remember('sidebar_course_count', 60, fn() => \App\Models\Course::count()) }}</span>
+                    <span class="text-emerald-900 font-black text-sm font-outfit">{{ $sCourseCount }}</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <div class="flex items-center gap-2 text-amber-700">
                         <i class="fa-solid fa-clock text-[10px] text-amber-600"></i>
                         <span class="text-[10px] font-bold">Pending</span>
                     </div>
-                    <span class="text-amber-600 font-black text-sm font-outfit">{{ \Illuminate\Support\Facades\Cache::remember('sidebar_pending_count', 30, fn() => \App\Models\TaskSubmission::where('status','pending')->count()) }}</span>
+                    <span class="text-amber-600 font-black text-sm font-outfit">{{ $sPending }}</span>
                 </div>
             </div>
         </nav>
