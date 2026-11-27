@@ -49,7 +49,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; }
             </div>
             <div>
                 <p class="font-black text-white text-xs font-outfit leading-tight">{{ Auth::guard('college')->user()->college_name }}</p>
-                <p class="text-indigo-400 text-[9px] font-bold uppercase tracking-widest mt-0.5">College Portal</p>
+                <p class="text-indigo-400 text-[9px] font-bold uppercase tracking-widest mt-0.5">Institute Portal</p>
             </div>
         </div>
     </div>
