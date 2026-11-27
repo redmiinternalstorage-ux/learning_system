@@ -304,3 +304,44 @@ Route::middleware(['auth', 'admin'])->prefix('admin/campus')->name('admin.campus
     Route::delete('/domains/{domain}',                  [\App\Http\Controllers\AdminCampusController::class, 'deleteDomain'])->name('domains.delete');
     Route::get('/analytics',                            [\App\Http\Controllers\AdminCampusController::class, 'analytics'])->name('analytics');
 });
+
+// ══════════════════════════════════════════════════════════════
+//  COLLEGE ADMIN PORTAL
+// ══════════════════════════════════════════════════════════════
+
+// College Auth (guest)
+Route::prefix('college')->name('college.')->group(function () {
+    Route::get('/login',     [\App\Http\Controllers\CollegeAdminController::class, 'showLogin'])->name('login');
+    Route::post('/login',    [\App\Http\Controllers\CollegeAdminController::class, 'login'])->name('login.post');
+    Route::get('/register',  [\App\Http\Controllers\CollegeAdminController::class, 'showRegister'])->name('register');
+    Route::post('/register', [\App\Http\Controllers\CollegeAdminController::class, 'register'])->name('register.post');
+    Route::post('/logout',   [\App\Http\Controllers\CollegeAdminController::class, 'logout'])->name('logout');
+});
+
+// College Authenticated (requires college guard + active status)
+Route::prefix('college')->name('college.')->middleware('college')->group(function () {
+    Route::get('/dashboard',                                    [\App\Http\Controllers\CollegeAdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/students',                                     [\App\Http\Controllers\CollegeAdminController::class, 'students'])->name('students');
+    Route::post('/students',                                    [\App\Http\Controllers\CollegeAdminController::class, 'addStudent'])->name('students.add');
+    Route::post('/students/import',                             [\App\Http\Controllers\CollegeAdminController::class, 'importStudents'])->name('students.import');
+    Route::get('/students/{student}/edit',                      [\App\Http\Controllers\CollegeAdminController::class, 'editStudent'])->name('students.edit');
+    Route::put('/students/{student}',                           [\App\Http\Controllers\CollegeAdminController::class, 'updateStudent'])->name('students.update');
+    Route::delete('/students/{student}',                        [\App\Http\Controllers\CollegeAdminController::class, 'deleteStudent'])->name('students.delete');
+    Route::post('/students/{student}/status',                   [\App\Http\Controllers\CollegeAdminController::class, 'toggleStudentStatus'])->name('students.status');
+    Route::get('/students/{student}/courses',                   [\App\Http\Controllers\CollegeAdminController::class, 'studentCourses'])->name('students.courses');
+    Route::post('/students/{student}/courses/enroll',           [\App\Http\Controllers\CollegeAdminController::class, 'enrollStudentCourse'])->name('students.courses.enroll');
+    Route::post('/students/{student}/courses/unenroll',         [\App\Http\Controllers\CollegeAdminController::class, 'unenrollStudentCourse'])->name('students.courses.unenroll');
+    Route::get('/profile',                                      [\App\Http\Controllers\CollegeAdminController::class, 'profile'])->name('profile');
+    Route::post('/profile',                                     [\App\Http\Controllers\CollegeAdminController::class, 'updateProfile'])->name('profile.update');
+});
+
+// Admin manages college accounts
+Route::middleware(['auth', 'admin'])->prefix('admin/colleges')->name('admin.colleges.')->group(function () {
+    Route::get('/',                         [\App\Http\Controllers\AdminCollegeController::class, 'index'])->name('index');
+    Route::get('/create',                   [\App\Http\Controllers\AdminCollegeController::class, 'create'])->name('create');
+    Route::post('/',                        [\App\Http\Controllers\AdminCollegeController::class, 'store'])->name('store');
+    Route::get('/{college}/edit',           [\App\Http\Controllers\AdminCollegeController::class, 'edit'])->name('edit');
+    Route::put('/{college}',                [\App\Http\Controllers\AdminCollegeController::class, 'update'])->name('update');
+    Route::delete('/{college}',             [\App\Http\Controllers\AdminCollegeController::class, 'destroy'])->name('destroy');
+    Route::post('/{college}/toggle-status', [\App\Http\Controllers\AdminCollegeController::class, 'toggleStatus'])->name('toggle');
+});
