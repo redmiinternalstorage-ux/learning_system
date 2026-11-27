@@ -70,25 +70,16 @@
         </p>
 
         <div class="mt-5 pt-4 border-t border-slate-100">
-            <p class="text-[10px] text-center font-bold text-slate-400 uppercase tracking-widest mb-3">Other Login Options</p>
-            <div class="grid grid-cols-2 gap-2">
-                <a href="{{ route('admin.login') }}"
-                   class="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-rose-100 bg-rose-50 hover:bg-rose-100 text-rose-700 transition text-xs font-bold">
-                    <i class="fa-solid fa-shield-halved text-rose-500 text-sm"></i>
-                    <div>
-                        <p class="font-bold leading-tight">Admin / Staff</p>
-                        <p class="text-[9px] text-rose-400 font-normal">Management portal</p>
-                    </div>
-                </a>
-                <a href="{{ route('campus.login') }}"
-                   class="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-teal-100 bg-teal-50 hover:bg-teal-100 text-teal-700 transition text-xs font-bold">
-                    <i class="fa-solid fa-graduation-cap text-teal-500 text-sm"></i>
-                    <div>
-                        <p class="font-bold leading-tight">Campus</p>
-                        <p class="text-[9px] text-teal-400 font-normal">Academic portal</p>
-                    </div>
-                </a>
-            </div>
+            <p class="text-[10px] text-center font-bold text-slate-400 uppercase tracking-widest mb-3">Other Portals</p>
+            <a href="{{ route('campus.login') }}"
+               class="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-teal-100 bg-teal-50 hover:bg-teal-100 text-teal-700 transition text-xs font-bold w-full">
+                <i class="fa-solid fa-graduation-cap text-teal-500 text-sm"></i>
+                <div>
+                    <p class="font-bold leading-tight">Campus Program</p>
+                    <p class="text-[9px] text-teal-400 font-normal">College academic portal</p>
+                </div>
+                <i class="fa-solid fa-arrow-right text-[9px] text-teal-300 ml-auto"></i>
+            </a>
         </div>
     </div>
 </div>
