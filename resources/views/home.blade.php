@@ -151,20 +151,64 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; overflow-
                     <span class="hidden sm:inline font-bold">Dashboard</span>
                 </a>
             @else
-                {{-- Campus Portal Button --}}
-                <a href="{{ route('campus.home') }}"
-                   class="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-sm transition-all duration-200">
-                    <i class="fa-solid fa-graduation-cap text-xs"></i>
-                    <span>Campus</span>
-                </a>
-                {{-- Login Button --}}
-                <a href="{{ route('login') }}"
-                   class="hidden sm:flex items-center gap-2.5 px-5 py-2.5 rounded-2xl border-2 border-emerald-200 bg-white hover:bg-emerald-50 hover:border-emerald-400 text-emerald-700 font-bold text-sm transition-all duration-200 group">
-                    <span class="w-7 h-7 rounded-xl bg-emerald-100 group-hover:bg-emerald-200 flex items-center justify-center transition flex-shrink-0">
+                {{-- Login As dropdown --}}
+                <div class="relative hidden sm:block" id="login-as-dropdown-wrap">
+                    <button onclick="toggleLoginDropdown()" id="login-as-btn"
+                            class="flex items-center gap-2 px-4 py-2.5 rounded-2xl border-2 border-slate-200 bg-white hover:bg-slate-50 hover:border-emerald-300 text-slate-700 font-bold text-sm transition-all duration-200">
                         <i class="fa-solid fa-right-to-bracket text-emerald-600 text-xs"></i>
-                    </span>
-                    <span>Login</span>
-                </a>
+                        <span>Login</span>
+                        <i class="fa-solid fa-chevron-down text-[9px] text-slate-400 transition-transform" id="login-chevron"></i>
+                    </button>
+                    {{-- Dropdown menu --}}
+                    <div id="login-dropdown" class="hidden absolute right-0 top-full mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl shadow-slate-200/60 z-50 overflow-hidden">
+                        <div class="p-3 border-b border-slate-100">
+                            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400">Choose Login Type</p>
+                        </div>
+                        {{-- Student Login --}}
+                        <a href="{{ route('login') }}"
+                           class="flex items-center gap-3 px-4 py-3.5 hover:bg-emerald-50 transition group">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-100 group-hover:bg-emerald-200 flex items-center justify-center flex-shrink-0 transition">
+                                <i class="fa-solid fa-user-graduate text-emerald-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-800 text-sm group-hover:text-emerald-700">Student / Learner</p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Access courses, tasks & certificates</p>
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-[10px] text-slate-300 group-hover:text-emerald-500 ml-auto transition"></i>
+                        </a>
+                        {{-- Admin / Staff Login --}}
+                        <a href="{{ route('admin.login') }}"
+                           class="flex items-center gap-3 px-4 py-3.5 hover:bg-rose-50 transition group border-t border-slate-100">
+                            <div class="w-9 h-9 rounded-xl bg-rose-100 group-hover:bg-rose-200 flex items-center justify-center flex-shrink-0 transition">
+                                <i class="fa-solid fa-shield-halved text-rose-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-800 text-sm group-hover:text-rose-700">Admin / Staff</p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Management & admin panel access</p>
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-[10px] text-slate-300 group-hover:text-rose-500 ml-auto transition"></i>
+                        </a>
+                        {{-- Campus Login --}}
+                        <a href="{{ route('campus.login') }}"
+                           class="flex items-center gap-3 px-4 py-3.5 hover:bg-teal-50 transition group border-t border-slate-100">
+                            <div class="w-9 h-9 rounded-xl bg-teal-100 group-hover:bg-teal-200 flex items-center justify-center flex-shrink-0 transition">
+                                <i class="fa-solid fa-graduation-cap text-teal-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-800 text-sm group-hover:text-teal-700">Campus Program</p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Academic learning portal</p>
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-[10px] text-slate-300 group-hover:text-teal-500 ml-auto transition"></i>
+                        </a>
+                        {{-- Register link at bottom --}}
+                        <div class="p-3 bg-slate-50 border-t border-slate-100">
+                            <a href="{{ route('register') }}"
+                               class="flex items-center justify-center gap-2 w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition">
+                                <i class="fa-solid fa-user-plus text-[10px]"></i> New here? Register Free
+                            </a>
+                        </div>
+                    </div>
+                </div>
                 {{-- Register Button --}}
                 <a href="{{ route('register') }}"
                    class="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl btn-green text-sm font-bold shadow-lg shadow-emerald-500/30 group">
@@ -186,8 +230,21 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; overflow-
         <a href="#categories" class="block py-2.5 px-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition">Categories</a>
         <a href="#features" class="block py-2.5 px-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition">Features</a>
         @guest
-        <a href="{{ route('login') }}" class="block py-2.5 px-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-emerald-50 transition">Login</a>
-        <a href="{{ route('register') }}" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition">Register Free</a>
+        <div class="pt-2 pb-1 border-t border-slate-100">
+            <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 px-3 mb-2">Login As</p>
+            <a href="{{ route('login') }}" class="flex items-center gap-2.5 py-2.5 px-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-emerald-50 transition">
+                <i class="fa-solid fa-user-graduate text-emerald-600 text-xs w-4 text-center"></i> Student Login
+            </a>
+            <a href="{{ route('admin.login') }}" class="flex items-center gap-2.5 py-2.5 px-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-rose-50 transition">
+                <i class="fa-solid fa-shield-halved text-rose-500 text-xs w-4 text-center"></i> Admin / Staff Login
+            </a>
+            <a href="{{ route('campus.login') }}" class="flex items-center gap-2.5 py-2.5 px-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-teal-50 transition">
+                <i class="fa-solid fa-graduation-cap text-teal-600 text-xs w-4 text-center"></i> Campus Login
+            </a>
+            <a href="{{ route('register') }}" class="mt-2 block py-2.5 px-3 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition">
+                <i class="fa-solid fa-user-plus text-xs mr-1"></i> Register Free
+            </a>
+        </div>
         @endguest
         @auth
         <a href="{{ route('dashboard') }}" class="block py-2.5 px-3 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition">My Dashboard</a>
@@ -683,6 +740,27 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         if (t) { e.preventDefault(); t.scrollIntoView({ behavior:'smooth', block:'start' }); }
         document.getElementById('mob-nav')?.classList.add('hidden');
     });
+});
+
+// Login dropdown toggle
+function toggleLoginDropdown() {
+    const dropdown = document.getElementById('login-dropdown');
+    const chevron  = document.getElementById('login-chevron');
+    if (!dropdown) return;
+    const isHidden = dropdown.classList.contains('hidden');
+    dropdown.classList.toggle('hidden', !isHidden);
+    if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : '';
+}
+
+// Close login dropdown on outside click
+document.addEventListener('click', (e) => {
+    const wrap = document.getElementById('login-as-dropdown-wrap');
+    const dropdown = document.getElementById('login-dropdown');
+    if (wrap && dropdown && !wrap.contains(e.target)) {
+        dropdown.classList.add('hidden');
+        const chevron = document.getElementById('login-chevron');
+        if (chevron) chevron.style.transform = '';
+    }
 });
 </script>
 </body>
