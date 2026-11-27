@@ -7,16 +7,17 @@
   use App\Models\StaffWorkLog;
   use App\Models\SalaryPayment;
 
-  $monthSeconds = StaffWorkLog::where('user_id',$staff->id)
-      ->whereMonth('work_date',now()->month)->whereYear('work_date',now()->year)
-      ->whereNotNull('clock_out')->sum('duration_seconds');
+  try {
+      $monthSeconds = StaffWorkLog::where('user_id',$staff->id)
+          ->whereMonth('work_date',now()->month)->whereYear('work_date',now()->year)
+          ->whereNotNull('clock_out')->sum('duration_seconds');
+      $totalSeconds = StaffWorkLog::where('user_id',$staff->id)->whereNotNull('clock_out')->sum('duration_seconds');
+      $lastPayment  = SalaryPayment::where('staff_id',$staff->id)->latest()->first();
+  } catch (\Throwable $e) {
+      $monthSeconds = 0; $totalSeconds = 0; $lastPayment = null;
+  }
   $monthHours = round($monthSeconds/3600,1);
-
-  $totalSeconds = StaffWorkLog::where('user_id',$staff->id)->whereNotNull('clock_out')->sum('duration_seconds');
   $totalHours = round($totalSeconds/3600,1);
-
-  $lastPayment = SalaryPayment::where('staff_id',$staff->id)->latest()->first();
-
   $hourlyRate = 0;
   if($staff->salary && $staff->salary_cycle==='monthly') {
       $hourlyRate = round($staff->salary/(22*8),2);
