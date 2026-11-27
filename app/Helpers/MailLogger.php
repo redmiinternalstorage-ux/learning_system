@@ -11,12 +11,6 @@ use Illuminate\Support\Facades\Log;
  *
  * PRIMARY:  Google Apps Script (GmailApp) via HTTPS — works on Render free tier
  * FALLBACK: Laravel Mail (SMTP/Resend) if Apps Script fails
- *
- * Usage:
- *   MailLogger::log('welcome', $email, $name, $userId, fn() => new WelcomeMail($user));
- *   MailLogger::log('otp',     $email, $name, $userId, fn() => new OtpMail($otp, $name));
- *
- *   Legacy callable (old Mail::to()->send() style) also still supported.
  */
 class MailLogger
 {
@@ -28,7 +22,7 @@ class MailLogger
         callable $mailableOrCallback,
         ?string  $triggeredBy = null,
         array    $extra = []
-    ): MailLog {
+    ): ?MailLog {
         $data = array_merge([
             'mail_type'       => $mailType,
             'recipient_email' => $email,
@@ -42,7 +36,6 @@ class MailLogger
         try {
             $result = $mailableOrCallback();
 
-            // If callback returned a Mailable — use GoogleMailHelper
             if ($result instanceof Mailable) {
                 $sent = GoogleMailHelper::send($email, $result);
 
@@ -50,11 +43,9 @@ class MailLogger
                     $data['success']       = true;
                     $data['error_message'] = null;
                 } else {
-                    // Fallback to Laravel Mail
                     $data = self::tryLaravelFallback($data, $email, $result);
                 }
             } else {
-                // Legacy: callback already sent the mail (old Mail::to()->send() style)
                 $data['success']       = true;
                 $data['error_message'] = null;
             }
@@ -65,7 +56,13 @@ class MailLogger
             Log::error("Mail [{$mailType}] to {$email} FAILED: " . $e->getMessage());
         }
 
-        return MailLog::create($data);
+        // Save to DB — wrapped in try-catch so a DB failure doesn't crash the page
+        try {
+            return MailLog::create($data);
+        } catch (\Throwable $e) {
+            Log::warning("MailLogger DB save failed [{$mailType}]: " . $e->getMessage());
+            return null;
+        }
     }
 
     private static function tryLaravelFallback(array $data, string $email, Mailable $mailable): array
@@ -84,14 +81,18 @@ class MailLogger
 
     public static function markOtpVerified(string $email): void
     {
-        MailLog::where('recipient_email', $email)
-            ->whereIn('mail_type', ['otp', 'otp_resend'])
-            ->where('otp_verified', false)
-            ->latest()
-            ->limit(1)
-            ->update([
-                'otp_verified'    => true,
-                'otp_verified_at' => now(),
-            ]);
+        try {
+            MailLog::where('recipient_email', $email)
+                ->whereIn('mail_type', ['otp', 'otp_resend'])
+                ->where('otp_verified', false)
+                ->latest()
+                ->limit(1)
+                ->update([
+                    'otp_verified'    => true,
+                    'otp_verified_at' => now(),
+                ]);
+        } catch (\Throwable $e) {
+            Log::warning("MailLogger markOtpVerified failed: " . $e->getMessage());
+        }
     }
 }
