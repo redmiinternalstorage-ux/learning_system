@@ -46,7 +46,7 @@
                 <p class="text-[11px] text-slate-400 mt-0.5">Feel free to reach out to our support team directly via email.</p>
             </div>
             
-            <a href="mailto:{{ \App\Models\SiteSetting::get('contact_email', 'admin@gmail.com') }}" 
+            <a href="mailto:{{ (function(){ try { return \App\Models\SiteSetting::get('contact_email', 'admin@gmail.com'); } catch(\Throwable $e){ return 'admin@gmail.com'; } })() }}" 
                class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-extrabold text-xs shadow-lg transition transform hover:scale-105">
                 <i class="fa-solid fa-envelope text-sm"></i> Contact Support Team
             </a>
