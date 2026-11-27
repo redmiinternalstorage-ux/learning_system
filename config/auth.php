@@ -46,6 +46,10 @@ return [
             'driver' => 'session',
             'provider' => 'campus_students',
         ],
+        'college' => [
+            'driver' => 'session',
+            'provider' => 'college_admins',
+        ],
     ],
 
     /*
@@ -73,6 +77,10 @@ return [
         'campus_students' => [
             'driver' => 'eloquent',
             'model' => \App\Models\CampusStudent::class,
+        ],
+        'college_admins' => [
+            'driver' => 'eloquent',
+            'model' => \App\Models\CollegeAdmin::class,
         ],
     ],
 
