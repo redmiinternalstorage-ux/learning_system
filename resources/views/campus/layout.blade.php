@@ -92,8 +92,13 @@ html.dark .inp{background:#0f2318;border-color:#1a3a28;color:#e2e8f0;}
         <div class="pt-3 mt-3 border-t border-emerald-100 dark:border-emerald-800/30">
             <p class="text-[9px] font-black uppercase tracking-widest text-emerald-600 px-3 mb-2">Info</p>
             @php
-                $totalEnrolled   = \App\Models\CampusEnrollment::where('campus_student_id', $campusStudent->id)->count();
-                $totalCompleted  = \App\Models\CampusEnrollment::where('campus_student_id', $campusStudent->id)->where('progress', 100)->count();
+                try {
+                    $totalEnrolled  = \App\Models\CampusEnrollment::where('campus_student_id', $campusStudent->id)->count();
+                    $totalCompleted = \App\Models\CampusEnrollment::where('campus_student_id', $campusStudent->id)->where('progress', 100)->count();
+                } catch (\Throwable $e) {
+                    $totalEnrolled  = 0;
+                    $totalCompleted = 0;
+                }
             @endphp
             <div class="mx-1 p-3 rounded-xl bg-emerald-50/80 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800/30 space-y-2 text-xs">
                 <div class="flex justify-between"><span class="text-slate-500">Enrolled</span><span class="font-black text-emerald-700">{{ $totalEnrolled }}</span></div>
