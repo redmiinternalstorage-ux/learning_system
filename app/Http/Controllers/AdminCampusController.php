@@ -143,22 +143,45 @@ class AdminCampusController extends Controller
     // ── Stats / Analytics ──────────────────────────────────────
     public function analytics()
     {
-        $topCourses = CampusEnrollment::with('course')
-            ->selectRaw('course_id, COUNT(*) as count, AVG(progress) as avg_progress')
-            ->groupBy('course_id')
-            ->orderByDesc('count')
-            ->take(10)->get();
+        try {
+            $topCourses = CampusEnrollment::with('course')
+                ->selectRaw('course_id, COUNT(*) as count, AVG(progress) as avg_progress')
+                ->groupBy('course_id')
+                ->orderByDesc('count')
+                ->take(10)->get();
+        } catch (\Throwable $e) {
+            $topCourses = collect();
+        }
 
-        $collegeBreakdown = CampusStudent::where('status', 'approved')
-            ->selectRaw('college_name, COUNT(*) as count')
-            ->groupBy('college_name')
-            ->orderByDesc('count')
-            ->get();
+        try {
+            $collegeBreakdown = CampusStudent::where('status', 'approved')
+                ->selectRaw('college_name, COUNT(*) as count')
+                ->groupBy('college_name')
+                ->orderByDesc('count')
+                ->get();
+        } catch (\Throwable $e) {
+            $collegeBreakdown = collect();
+        }
 
-        $monthlyRegistrations = CampusStudent::selectRaw("DATE_TRUNC('month', created_at) as month, COUNT(*) as count")
-            ->groupByRaw("DATE_TRUNC('month', created_at)")
-            ->orderBy('month')
-            ->take(12)->get();
+        try {
+            $driver = \Illuminate\Support\Facades\DB::getDriverName();
+            if ($driver === 'pgsql') {
+                $monthlyRegistrations = CampusStudent::selectRaw("TO_CHAR(DATE_TRUNC('month', created_at), 'Mon YYYY') as month, COUNT(*) as count")
+                    ->groupByRaw("DATE_TRUNC('month', created_at)")
+                    ->orderByRaw("DATE_TRUNC('month', created_at)")
+                    ->take(12)->get();
+            } elseif ($driver === 'sqlite') {
+                $monthlyRegistrations = CampusStudent::selectRaw("strftime('%b %Y', created_at) as month, COUNT(*) as count")
+                    ->groupByRaw("strftime('%Y-%m', created_at)")
+                    ->take(12)->get();
+            } else {
+                $monthlyRegistrations = CampusStudent::selectRaw("DATE_FORMAT(created_at, '%b %Y') as month, COUNT(*) as count")
+                    ->groupByRaw("DATE_FORMAT(created_at, '%Y-%m')")
+                    ->take(12)->get();
+            }
+        } catch (\Throwable $e) {
+            $monthlyRegistrations = collect();
+        }
 
         return view('admin.campus.analytics', compact('topCourses', 'collegeBreakdown', 'monthlyRegistrations'));
     }
