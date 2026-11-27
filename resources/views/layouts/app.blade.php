@@ -220,8 +220,10 @@
             <i class="icon fa-solid fa-headset"></i> Help & Support Center
             @php
                 $myOpen = \Illuminate\Support\Facades\Cache::remember('sidebar_unread_user_' . Auth::id(), 45, function () {
-                    return \App\Models\SupportTicket::where('user_id', Auth::id())
-                        ->where('user_read', false)->where('admin_replied', true)->count();
+                    try {
+                        return \App\Models\SupportTicket::where('user_id', Auth::id())
+                            ->where('user_read', false)->where('admin_replied', true)->count();
+                    } catch (\Throwable $e) { return 0; }
                 });
             @endphp
             @if($myOpen > 0)
