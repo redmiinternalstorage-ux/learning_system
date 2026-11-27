@@ -187,18 +187,26 @@ class CampusController extends Controller
     public function dashboard()
     {
         $student     = Auth::guard('campus')->user();
-        $enrollments = CampusEnrollment::with('course')
-            ->where('campus_student_id', $student->id)
-            ->latest()->get();
+        try {
+            $enrollments = CampusEnrollment::with('course')
+                ->where('campus_student_id', $student->id)
+                ->latest()->get();
+        } catch (\Throwable $e) {
+            $enrollments = collect();
+        }
 
         $totalCourses    = $enrollments->count();
         $completed       = $enrollments->where('progress', 100)->count();
         $inProgress      = $enrollments->where('progress', '>', 0)->where('progress', '<', 100)->count();
         $totalProgress   = $totalCourses > 0 ? round($enrollments->avg('progress')) : 0;
 
-        $availableCourses = Course::where('is_published', true)
-            ->whereNotIn('id', $enrollments->pluck('course_id'))
-            ->latest()->take(6)->get();
+        try {
+            $availableCourses = Course::where('is_published', true)
+                ->whereNotIn('id', $enrollments->pluck('course_id'))
+                ->latest()->take(6)->get();
+        } catch (\Throwable $e) {
+            $availableCourses = collect();
+        }
 
         return view('campus.dashboard', compact(
             'student', 'enrollments', 'totalCourses', 'completed',
@@ -210,8 +218,13 @@ class CampusController extends Controller
     public function courses()
     {
         $student     = Auth::guard('campus')->user();
-        $enrolledIds = CampusEnrollment::where('campus_student_id', $student->id)->pluck('course_id');
-        $courses     = Course::where('is_published', true)->latest()->paginate(12);
+        try {
+            $enrolledIds = CampusEnrollment::where('campus_student_id', $student->id)->pluck('course_id');
+            $courses     = Course::where('is_published', true)->latest()->paginate(12);
+        } catch (\Throwable $e) {
+            $enrolledIds = collect();
+            $courses     = new \Illuminate\Pagination\LengthAwarePaginator(collect(), 0, 12);
+        }
 
         return view('campus.courses', compact('student', 'courses', 'enrolledIds'));
     }
@@ -220,18 +233,22 @@ class CampusController extends Controller
     {
         $student = Auth::guard('campus')->user();
 
-        $exists = CampusEnrollment::where('campus_student_id', $student->id)
-            ->where('course_id', $course->id)->exists();
+        try {
+            $exists = CampusEnrollment::where('campus_student_id', $student->id)
+                ->where('course_id', $course->id)->exists();
 
-        if ($exists) {
-            return back()->with('info', 'Already enrolled in this course.');
+            if ($exists) {
+                return back()->with('info', 'Already enrolled in this course.');
+            }
+
+            CampusEnrollment::create([
+                'campus_student_id' => $student->id,
+                'course_id'         => $course->id,
+                'progress'          => 0,
+            ]);
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Enrollment failed. Please try again.');
         }
-
-        CampusEnrollment::create([
-            'campus_student_id' => $student->id,
-            'course_id'         => $course->id,
-            'progress'          => 0,
-        ]);
 
         return back()->with('success', '✅ Enrolled in "' . $course->title . '" successfully!');
     }
@@ -239,14 +256,18 @@ class CampusController extends Controller
     public function courseDetail(Course $course)
     {
         $student    = Auth::guard('campus')->user();
-        $enrollment = CampusEnrollment::where('campus_student_id', $student->id)
-            ->where('course_id', $course->id)->first();
+        try {
+            $enrollment = CampusEnrollment::where('campus_student_id', $student->id)
+                ->where('course_id', $course->id)->first();
 
-        if (!$enrollment) {
-            return redirect()->route('campus.courses')->with('error', 'Please enroll first.');
+            if (!$enrollment) {
+                return redirect()->route('campus.courses')->with('error', 'Please enroll first.');
+            }
+
+            $tasks = $course->tasks()->latest()->get();
+        } catch (\Throwable $e) {
+            return redirect()->route('campus.courses')->with('error', 'Could not load course. Please try again.');
         }
-
-        $tasks = $course->tasks()->latest()->get();
 
         return view('campus.course-detail', compact('student', 'course', 'enrollment', 'tasks'));
     }
@@ -301,9 +322,13 @@ class CampusController extends Controller
     public function progress()
     {
         $student     = Auth::guard('campus')->user();
-        $enrollments = CampusEnrollment::with('course')
-            ->where('campus_student_id', $student->id)
-            ->latest()->get();
+        try {
+            $enrollments = CampusEnrollment::with('course')
+                ->where('campus_student_id', $student->id)
+                ->latest()->get();
+        } catch (\Throwable $e) {
+            $enrollments = collect();
+        }
 
         return view('campus.progress', compact('student', 'enrollments'));
     }
@@ -313,11 +338,15 @@ class CampusController extends Controller
     {
         $student = Auth::guard('campus')->user();
 
-        $leaders = CampusStudent::where('status', 'approved')
-            ->withCount(['enrollments as completed_count' => fn($q) => $q->where('progress', 100)])
-            ->withCount('enrollments as total_enrollments')
-            ->orderByDesc('completed_count')
-            ->take(20)->get();
+        try {
+            $leaders = CampusStudent::where('status', 'approved')
+                ->withCount(['enrollments as completed_count' => fn($q) => $q->where('progress', 100)])
+                ->withCount('enrollments as total_enrollments')
+                ->orderByDesc('completed_count')
+                ->take(20)->get();
+        } catch (\Throwable $e) {
+            $leaders = collect();
+        }
 
         return view('campus.leaderboard', compact('student', 'leaders'));
     }
