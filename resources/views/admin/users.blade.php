@@ -174,6 +174,17 @@
                                        class="inline-flex items-center gap-1 text-[11px] font-bold text-teal-700 hover:text-teal-900 transition">
                                         <i class="fa-solid fa-pen-to-square text-[9px]"></i> Edit
                                     </a>
+                                    @if($u->role !== 'admin' && !$u->is_blocked && Auth::user()->isAdmin())
+                                    <form method="POST" action="{{ route('admin.impersonate.start', $u) }}" class="inline">
+                                        @csrf
+                                        <button type="submit"
+                                                onclick="return confirm('Login as {{ addslashes($u->name) }}? You will be redirected to their dashboard view.')"
+                                                class="inline-flex items-center gap-1 text-[11px] font-bold text-violet-600 hover:text-violet-800 transition"
+                                                title="View site as this user">
+                                            <i class="fa-solid fa-eye text-[9px]"></i> Login As
+                                        </button>
+                                    </form>
+                                    @endif
                                     @if($u->email !== 'admin@gmail.com')
                                     <form method="POST" action="{{ route('admin.users.toggle-block', $u) }}" class="inline">
                                         @csrf
@@ -286,9 +297,27 @@
             </div>
         </div>
 
-        <div id="drawer-footer" class="pt-4 border-t border-slate-100 hidden flex gap-2">
-            <a id="u-edit-link" href="#" class="btn-primary flex-1 text-center py-2.5 text-xs">Edit User</a>
-            <button onclick="closeUserDrawer()" class="btn-secondary px-4 text-xs">Close</button>
+        <div id="drawer-footer" class="pt-4 border-t border-slate-100 hidden flex flex-col gap-2">
+            <div class="flex gap-2">
+                <a id="u-edit-link" href="#" class="btn-primary flex-1 text-center py-2.5 text-xs">
+                    <i class="fa-solid fa-pen-to-square mr-1"></i> Edit User
+                </a>
+                <button onclick="closeUserDrawer()" class="btn-secondary px-4 text-xs">Close</button>
+            </div>
+            @if(Auth::user()->isAdmin())
+            <div id="login-as-container" class="hidden">
+                <form id="login-as-form" method="POST" action="">
+                    @csrf
+                    <button type="submit"
+                            onclick="return confirm('Switch to this user\'s view? You can return anytime from the banner.')"
+                            class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs transition shadow-sm shadow-violet-500/25">
+                        <i class="fa-solid fa-eye"></i>
+                        <span>Login As This User</span>
+                        <span class="text-violet-300 text-[9px] font-normal ml-1">(View their experience)</span>
+                    </button>
+                </form>
+            </div>
+            @endif
         </div>
     </div>
 </div>
@@ -389,6 +418,17 @@
                 }
 
                 document.getElementById('u-edit-link').href = `/admin/users/${u.id}/edit`;
+
+                // Login As button — only for non-admin, non-blocked users
+                const loginAsContainer = document.getElementById('login-as-container');
+                if (loginAsContainer) {
+                    if (u.role !== 'admin' && !u.is_blocked) {
+                        loginAsContainer.classList.remove('hidden');
+                        document.getElementById('login-as-form').action = `/admin/users/${u.id}/impersonate`;
+                    } else {
+                        loginAsContainer.classList.add('hidden');
+                    }
+                }
             });
     }
     function closeUserDrawer() {
