@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>College Portal Login — Learning Curve</title>
+<title>Institute Portal — Learning Curve</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Outfit:wght@400;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -22,7 +22,6 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
-{{-- BG blobs --}}
 <div class="fixed inset-0 overflow-hidden pointer-events-none">
     <div class="absolute top-20 left-10 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl animate-pulse"></div>
     <div class="absolute bottom-20 right-10 w-80 h-80 bg-violet-500/10 rounded-full blur-3xl animate-pulse" style="animation-delay:1.5s"></div>
@@ -30,16 +29,14 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient
 
 <div class="relative z-10 w-full max-w-md">
 
-    {{-- Logo --}}
     <div class="text-center mb-8">
         <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-2xl shadow-indigo-500/30 mb-4 float">
             <i class="fa-solid fa-building-columns text-white text-2xl"></i>
         </div>
-        <h1 class="text-3xl font-black text-white" style="font-family:'Outfit',sans-serif">College Portal</h1>
+        <h1 class="text-3xl font-black text-white" style="font-family:'Outfit',sans-serif">Institute Portal</h1>
         <p class="text-indigo-300 text-sm mt-1">Learning Curve • Institution Admin Access</p>
     </div>
 
-    {{-- Flash messages --}}
     @if(session('success'))
     <div class="glass rounded-2xl p-4 mb-4 text-emerald-200 text-sm flex items-center gap-2">
         <i class="fa-solid fa-circle-check text-emerald-400 flex-shrink-0"></i> {{ session('success') }}
@@ -51,7 +48,6 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient
     </div>
     @endif
 
-    {{-- Card --}}
     <div class="glass rounded-3xl p-7 shadow-2xl">
         <div class="flex items-center gap-3 mb-6">
             <div class="w-10 h-10 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center">
@@ -59,7 +55,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient
             </div>
             <div>
                 <h2 class="text-white font-black text-lg" style="font-family:'Outfit',sans-serif">Institution Sign In</h2>
-                <p class="text-slate-400 text-[11px]">Authorised college administrators only</p>
+                <p class="text-slate-400 text-[11px]">Authorised institute administrators only</p>
             </div>
         </div>
 
@@ -73,13 +69,13 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient
         <form method="POST" action="{{ route('college.login.post') }}" class="space-y-4">
             @csrf
             <div>
-                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">College Email</label>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Institute Email</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                         <i class="fa-regular fa-envelope text-slate-500 text-xs"></i>
                     </div>
                     <input type="email" name="email" value="{{ old('email') }}" required
-                           placeholder="admin@yourcollege.edu"
+                           placeholder="admin@yourinstitute.edu"
                            class="inp {{ $errors->has('email') ? 'error' : '' }}">
                 </div>
             </div>
@@ -100,7 +96,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient
                 <span class="text-xs text-slate-400">Keep me signed in</span>
             </label>
             <button type="submit" class="btn mt-2">
-                <i class="fa-solid fa-building-columns mr-2"></i> Access College Portal
+                <i class="fa-solid fa-building-columns mr-2"></i> Access Institute Portal
             </button>
         </form>
 
