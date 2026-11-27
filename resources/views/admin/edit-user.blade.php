@@ -19,13 +19,27 @@
             <div>
                 <p class="font-extrabold text-slate-800 dark:text-slate-100 text-base leading-tight font-outfit">{{ $user->name }}</p>
                 <p class="text-slate-400 dark:text-slate-500 text-xs font-semibold mt-1">{{ $user->email }}</p>
-                <div class="mt-2.5">
+                <div class="mt-2.5 flex items-center gap-2 flex-wrap">
                     @if($user->role === 'admin')
                         <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30">Admin</span>
                     @elseif($user->role === 'instructor')
                         <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30">Instructor</span>
+                    @elseif($user->role === 'staff')
+                        <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-400 border border-sky-100 dark:border-sky-900/30">Staff</span>
+                    @elseif($user->role === 'finance')
+                        <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30">Finance</span>
                     @else
                         <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-900/30">Student</span>
+                    @endif
+                    @if($user->role !== 'admin' && !$user->is_blocked && Auth::user()->isAdmin())
+                    <form method="POST" action="{{ route('admin.impersonate.start', $user) }}" class="inline">
+                        @csrf
+                        <button type="submit"
+                                onclick="return confirm('Login as {{ addslashes($user->name) }}? You will see the site from their perspective.')"
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider bg-violet-600 hover:bg-violet-700 text-white border border-violet-600 transition shadow-sm">
+                            <i class="fa-solid fa-eye text-[8px]"></i> Login As User
+                        </button>
+                    </form>
                     @endif
                 </div>
             </div>
