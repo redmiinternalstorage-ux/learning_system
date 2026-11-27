@@ -440,6 +440,77 @@ class GoogleSheetHelper
             $results['A-SiteSettings'] = $settings->count();
         } catch (\Throwable $e) { $results['A-SiteSettings'] = 'skipped'; }
 
+        // ══ CAMPUS PROGRAM ════════════════════════════════════
+
+        // C - Campus Students
+        try {
+            $campusStudents = DB::table('campus_students')
+                ->orderBy('id')->get();
+            self::bulkLoad('C - Campus Students', $campusStudents->map(fn($s) => [
+                'id'             => $s->id,
+                'name'           => $s->name,
+                'email'          => $s->college_email,
+                'college'        => $s->college_name ?? '-',
+                'student_id'     => $s->student_id ?? '-',
+                'department'     => $s->department ?? '-',
+                'semester'       => $s->semester ?? '-',
+                'status'         => $s->status,
+                'email_verified' => $s->email_verified ? 'Yes' : 'No',
+                'registered_at'  => $s->created_at,
+                'approved_at'    => $s->approved_at ?? '-',
+            ])->toArray());
+            $results['C-CampusStudents'] = $campusStudents->count();
+        } catch (\Throwable $e) { $results['C-CampusStudents'] = 'skipped'; }
+
+        // C - Campus Enrollments
+        try {
+            $campusEnroll = DB::table('campus_enrollments')
+                ->leftJoin('campus_students', 'campus_enrollments.campus_student_id', '=', 'campus_students.id')
+                ->leftJoin('courses', 'campus_enrollments.course_id', '=', 'courses.id')
+                ->select('campus_enrollments.*', 'campus_students.name as student_name', 'campus_students.college_email', 'courses.title as course_title')
+                ->orderBy('campus_enrollments.id')->get();
+            self::bulkLoad('C - Campus Enrollments', $campusEnroll->map(fn($e) => [
+                'id'           => $e->id,
+                'student'      => $e->student_name,
+                'email'        => $e->college_email,
+                'course'       => $e->course_title,
+                'progress'     => $e->progress . '%',
+                'completed_at' => $e->completed_at ?? '-',
+                'enrolled_at'  => $e->created_at,
+            ])->toArray());
+            $results['C-CampusEnrollments'] = $campusEnroll->count();
+        } catch (\Throwable $e) { $results['C-CampusEnrollments'] = 'skipped'; }
+
+        // C - Campus Domains
+        try {
+            $campusDomains = DB::table('campus_domains')->orderBy('id')->get();
+            self::bulkLoad('C - Campus Domains', $campusDomains->map(fn($d) => [
+                'id'           => $d->id,
+                'domain'       => $d->domain,
+                'college_name' => $d->college_name,
+                'is_active'    => $d->is_active ? 'Yes' : 'No',
+                'created_at'   => $d->created_at,
+            ])->toArray());
+            $results['C-CampusDomains'] = $campusDomains->count();
+        } catch (\Throwable $e) { $results['C-CampusDomains'] = 'skipped'; }
+
+        // C - Institute (College) Admins
+        try {
+            $colleges = DB::table('college_admins')->orderBy('id')->get();
+            self::bulkLoad('C - Institute Admins', $colleges->map(fn($c) => [
+                'id'             => $c->id,
+                'college_name'   => $c->college_name,
+                'email'          => $c->email,
+                'contact_person' => $c->contact_person ?? '-',
+                'phone'          => $c->phone ?? '-',
+                'domain'         => $c->domain ?? '-',
+                'status'         => $c->status,
+                'website'        => $c->website ?? '-',
+                'registered_at'  => $c->created_at,
+            ])->toArray());
+            $results['C-InstituteAdmins'] = $colleges->count();
+        } catch (\Throwable $e) { $results['C-InstituteAdmins'] = 'skipped'; }
+
         return $results;
     }
 }
