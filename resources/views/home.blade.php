@@ -176,18 +176,6 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; overflow-
                             </div>
                             <i class="fa-solid fa-arrow-right text-[10px] text-slate-300 group-hover:text-emerald-500 ml-auto transition"></i>
                         </a>
-                        {{-- Admin / Staff Login --}}
-                        <a href="{{ route('admin.login') }}"
-                           class="flex items-center gap-3 px-4 py-3.5 hover:bg-rose-50 transition group border-t border-slate-100">
-                            <div class="w-9 h-9 rounded-xl bg-rose-100 group-hover:bg-rose-200 flex items-center justify-center flex-shrink-0 transition">
-                                <i class="fa-solid fa-shield-halved text-rose-600 text-sm"></i>
-                            </div>
-                            <div>
-                                <p class="font-bold text-slate-800 text-sm group-hover:text-rose-700">Admin / Staff</p>
-                                <p class="text-[10px] text-slate-400 mt-0.5">Management & admin panel access</p>
-                            </div>
-                            <i class="fa-solid fa-arrow-right text-[10px] text-slate-300 group-hover:text-rose-500 ml-auto transition"></i>
-                        </a>
                         {{-- Campus Login --}}
                         <a href="{{ route('campus.login') }}"
                            class="flex items-center gap-3 px-4 py-3.5 hover:bg-teal-50 transition group border-t border-slate-100">
@@ -196,7 +184,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; overflow-
                             </div>
                             <div>
                                 <p class="font-bold text-slate-800 text-sm group-hover:text-teal-700">Campus Program</p>
-                                <p class="text-[10px] text-slate-400 mt-0.5">Academic learning portal</p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">College academic portal</p>
                             </div>
                             <i class="fa-solid fa-arrow-right text-[10px] text-slate-300 group-hover:text-teal-500 ml-auto transition"></i>
                         </a>
@@ -235,11 +223,8 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; overflow-
             <a href="{{ route('login') }}" class="flex items-center gap-2.5 py-2.5 px-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-emerald-50 transition">
                 <i class="fa-solid fa-user-graduate text-emerald-600 text-xs w-4 text-center"></i> Student Login
             </a>
-            <a href="{{ route('admin.login') }}" class="flex items-center gap-2.5 py-2.5 px-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-rose-50 transition">
-                <i class="fa-solid fa-shield-halved text-rose-500 text-xs w-4 text-center"></i> Admin / Staff Login
-            </a>
             <a href="{{ route('campus.login') }}" class="flex items-center gap-2.5 py-2.5 px-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-teal-50 transition">
-                <i class="fa-solid fa-graduation-cap text-teal-600 text-xs w-4 text-center"></i> Campus Login
+                <i class="fa-solid fa-graduation-cap text-teal-600 text-xs w-4 text-center"></i> Campus Portal
             </a>
             <a href="{{ route('register') }}" class="mt-2 block py-2.5 px-3 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition">
                 <i class="fa-solid fa-user-plus text-xs mr-1"></i> Register Free
