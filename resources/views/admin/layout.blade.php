@@ -381,7 +381,7 @@
 
                 <!-- Maintenance Mode Quick Toggle Button -->
                 @php
-                    $isMaintActive = (bool) \App\Models\SiteSetting::get('maintenance_mode', false);
+                    try { $isMaintActive = (bool) \App\Models\SiteSetting::get('maintenance_mode', false); } catch(\Throwable $e) { $isMaintActive = false; }
                 @endphp
                 <form method="POST" action="{{ route('admin.settings.toggle-maintenance') }}" class="inline-block">
                     @csrf
