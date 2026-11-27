@@ -279,6 +279,13 @@
                 <span class="ml-auto text-[8px] font-black bg-emerald-500 text-white px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $campusPending }}</span>
                 @endif
             </a>
+            <a href="{{ route('admin.colleges.index') }}" class="nav-item {{ request()->routeIs('admin.colleges*') ? 'active' : '' }}">
+                <i class="nav-icon fa-solid fa-building-columns text-indigo-500"></i> College Accounts
+                @php $collegePending = \Illuminate\Support\Facades\Cache::remember('college_pending_count', 60, fn() => \App\Models\CollegeAdmin::where('status','pending')->count()); @endphp
+                @if($collegePending > 0)
+                <span class="ml-auto text-[8px] font-black bg-indigo-500 text-white px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $collegePending }}</span>
+                @endif
+            </a>
             @endif
             <div class="my-3 border-t border-slate-100"></div>
             <p class="section-label px-2 mb-2">Live Stats</p>
