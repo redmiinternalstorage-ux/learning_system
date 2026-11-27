@@ -35,11 +35,12 @@
     {{-- Stats --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         @php
+        try { $availableCourseCount = \App\Models\Course::where('is_published',true)->count(); } catch(\Throwable $e) { $availableCourseCount = 0; }
         $statCards = [
             ['label'=>'Enrolled','value'=>$totalCourses,'icon'=>'fa-book-open','color'=>'emerald'],
             ['label'=>'Completed','value'=>$completed,'icon'=>'fa-circle-check','color'=>'teal'],
             ['label'=>'In Progress','value'=>$inProgress,'icon'=>'fa-spinner','color'=>'blue'],
-            ['label'=>'Available','value'=>\App\Models\Course::where('is_published',true)->count(),'icon'=>'fa-compass','color'=>'purple'],
+            ['label'=>'Available','value'=>$availableCourseCount,'icon'=>'fa-compass','color'=>'purple'],
         ];
         @endphp
         @foreach($statCards as $s)
