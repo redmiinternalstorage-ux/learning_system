@@ -176,17 +176,29 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; overflow-
                             </div>
                             <i class="fa-solid fa-arrow-right text-[10px] text-slate-300 group-hover:text-emerald-500 ml-auto transition"></i>
                         </a>
-                        {{-- Campus Login --}}
+                        {{-- Campus (Student) Portal --}}
                         <a href="{{ route('campus.login') }}"
                            class="flex items-center gap-3 px-4 py-3.5 hover:bg-teal-50 transition group border-t border-slate-100">
                             <div class="w-9 h-9 rounded-xl bg-teal-100 group-hover:bg-teal-200 flex items-center justify-center flex-shrink-0 transition">
                                 <i class="fa-solid fa-graduation-cap text-teal-600 text-sm"></i>
                             </div>
                             <div>
-                                <p class="font-bold text-slate-800 text-sm group-hover:text-teal-700">Campus Program</p>
-                                <p class="text-[10px] text-slate-400 mt-0.5">College academic portal</p>
+                                <p class="font-bold text-slate-800 text-sm group-hover:text-teal-700">Campus Student</p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">College academic portal for students</p>
                             </div>
                             <i class="fa-solid fa-arrow-right text-[10px] text-slate-300 group-hover:text-teal-500 ml-auto transition"></i>
+                        </a>
+                        {{-- Institute Admin Portal --}}
+                        <a href="{{ route('college.login') }}"
+                           class="flex items-center gap-3 px-4 py-3.5 hover:bg-indigo-50 transition group border-t border-slate-100">
+                            <div class="w-9 h-9 rounded-xl bg-indigo-100 group-hover:bg-indigo-200 flex items-center justify-center flex-shrink-0 transition">
+                                <i class="fa-solid fa-building-columns text-indigo-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-800 text-sm group-hover:text-indigo-700">Institute Portal</p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Manage your institution & students</p>
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-[10px] text-slate-300 group-hover:text-indigo-500 ml-auto transition"></i>
                         </a>
                         {{-- Register link at bottom --}}
                         <div class="p-3 bg-slate-50 border-t border-slate-100">
@@ -224,7 +236,10 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; overflow-
                 <i class="fa-solid fa-user-graduate text-emerald-600 text-xs w-4 text-center"></i> Student Login
             </a>
             <a href="{{ route('campus.login') }}" class="flex items-center gap-2.5 py-2.5 px-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-teal-50 transition">
-                <i class="fa-solid fa-graduation-cap text-teal-600 text-xs w-4 text-center"></i> Campus Portal
+                <i class="fa-solid fa-graduation-cap text-teal-600 text-xs w-4 text-center"></i> Campus Student
+            </a>
+            <a href="{{ route('college.login') }}" class="flex items-center gap-2.5 py-2.5 px-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-indigo-50 transition">
+                <i class="fa-solid fa-building-columns text-indigo-600 text-xs w-4 text-center"></i> Institute Portal
             </a>
             <a href="{{ route('register') }}" class="mt-2 block py-2.5 px-3 rounded-xl text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition">
                 <i class="fa-solid fa-user-plus text-xs mr-1"></i> Register Free
