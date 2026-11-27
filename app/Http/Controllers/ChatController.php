@@ -105,26 +105,35 @@ class ChatController extends Controller
     // ── Admin: all active chats ───────────────────────────────────────────
     public function adminIndex()
     {
-        $sessions = ChatMessage::with('user')
-            ->select('session_id', 'user_id')
-            ->selectRaw('MAX(created_at) as last_at')
-            ->selectRaw('SUM(CASE WHEN is_admin = 0 AND is_read = 0 THEN 1 ELSE 0 END) as unread')
-            ->groupBy('session_id', 'user_id')
-            ->orderByDesc('last_at')
-            ->paginate(20);
+        try {
+            $driver = \Illuminate\Support\Facades\DB::getDriverName();
+            $unreadExpr = $driver === 'pgsql'
+                ? 'SUM(CASE WHEN is_admin = false AND is_read = false THEN 1 ELSE 0 END) as unread'
+                : 'SUM(CASE WHEN is_admin = 0 AND is_read = 0 THEN 1 ELSE 0 END) as unread';
 
-        $sessionIds = $sessions->pluck('session_id')->toArray();
-        if (!empty($sessionIds)) {
-            $latestStatuses = ChatMessage::whereIn('session_id', $sessionIds)
-                ->orderBy('id', 'desc')
-                ->get()
-                ->unique('session_id')
-                ->pluck('chat_status', 'session_id');
+            $sessions = ChatMessage::with('user')
+                ->select('session_id', 'user_id')
+                ->selectRaw('MAX(created_at) as last_at')
+                ->selectRaw($unreadExpr)
+                ->groupBy('session_id', 'user_id')
+                ->orderByDesc('last_at')
+                ->paginate(20);
 
-            $sessions->getCollection()->transform(function($s) use ($latestStatuses) {
-                $s->chat_status = $latestStatuses[$s->session_id] ?? 'waiting';
-                return $s;
-            });
+            $sessionIds = $sessions->pluck('session_id')->toArray();
+            if (!empty($sessionIds)) {
+                $latestStatuses = ChatMessage::whereIn('session_id', $sessionIds)
+                    ->orderBy('id', 'desc')
+                    ->get()
+                    ->unique('session_id')
+                    ->pluck('chat_status', 'session_id');
+
+                $sessions->getCollection()->transform(function($s) use ($latestStatuses) {
+                    $s->chat_status = $latestStatuses[$s->session_id] ?? 'waiting';
+                    return $s;
+                });
+            }
+        } catch (\Throwable $e) {
+            $sessions = new \Illuminate\Pagination\LengthAwarePaginator(collect(), 0, 20);
         }
 
         return view('admin.chat.index', compact('sessions'));
