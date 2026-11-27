@@ -29,9 +29,20 @@ class StaffController extends Controller
         $staff = $query->latest()->paginate(15)->withQueryString();
 
         // Single aggregate query instead of 4 separate COUNTs
-        $allStaff = User::where('role', 'staff')
-            ->selectRaw('COUNT(*) as total, SUM(CASE WHEN is_blocked=0 THEN 1 ELSE 0 END) as active, SUM(CASE WHEN is_blocked=1 THEN 1 ELSE 0 END) as blocked, COALESCE(SUM(CASE WHEN salary IS NOT NULL THEN salary ELSE 0 END), 0) as total_salary')
-            ->first();
+        try {
+            $driver = \Illuminate\Support\Facades\DB::getDriverName();
+            if ($driver === 'pgsql') {
+                $allStaff = User::where('role', 'staff')
+                    ->selectRaw('COUNT(*) as total, SUM(CASE WHEN is_blocked=false THEN 1 ELSE 0 END) as active, SUM(CASE WHEN is_blocked=true THEN 1 ELSE 0 END) as blocked, COALESCE(SUM(CASE WHEN salary IS NOT NULL THEN salary ELSE 0 END), 0) as total_salary')
+                    ->first();
+            } else {
+                $allStaff = User::where('role', 'staff')
+                    ->selectRaw('COUNT(*) as total, SUM(CASE WHEN is_blocked=0 THEN 1 ELSE 0 END) as active, SUM(CASE WHEN is_blocked=1 THEN 1 ELSE 0 END) as blocked, COALESCE(SUM(CASE WHEN salary IS NOT NULL THEN salary ELSE 0 END), 0) as total_salary')
+                    ->first();
+            }
+        } catch (\Throwable $e) {
+            $allStaff = null;
+        }
 
         $stats = [
             'total'        => (int) ($allStaff->total        ?? 0),
@@ -85,7 +96,7 @@ class StaffController extends Controller
         MailLogger::log(
             'welcome',
             $staff->email, $staff->name, $staff->id,
-            fn() => Mail::to($staff->email)->send(new WelcomeMail($staff)),
+            fn() => new WelcomeMail($staff),
             'staff_management'
         );
 
@@ -146,13 +157,13 @@ class StaffController extends Controller
         MailLogger::log(
             'staff_updated',
             $staff->email, $staff->name, $staff->id,
-            fn() => Mail::to($staff->email)->send(new \App\Mail\StaffAccountNoticeMail(
+            fn() => new \App\Mail\StaffAccountNoticeMail(
                 $staff->name,
                 'updated',
                 'Account Details Updated',
                 'Your staff profile and account details have been updated by the Main Admin.',
                 ['Position' => $staff->position ?? 'Staff', 'Salary' => "{$staff->salary_currency} {$staff->salary}"]
-            )),
+            ),
             'staff_management'
         );
 
@@ -173,7 +184,7 @@ class StaffController extends Controller
         MailLogger::log(
             "staff_{$action}",
             $staff->email, $staff->name, $staff->id,
-            fn() => Mail::to($staff->email)->send(new \App\Mail\StaffAccountNoticeMail(
+            fn() => new \App\Mail\StaffAccountNoticeMail(
                 $staff->name,
                 $action,
                 $staff->is_blocked ? 'Account Access Restricted' : 'Account Restored',
@@ -181,7 +192,7 @@ class StaffController extends Controller
                     ? 'Your staff account access has been temporarily restricted by the Main Admin.'
                     : 'Your staff account access has been reactivated. You may now log in to the Staff Panel.',
                 ['Status' => ucfirst($action)]
-            )),
+            ),
             'staff_management'
         );
 
@@ -200,13 +211,13 @@ class StaffController extends Controller
         MailLogger::log(
             'staff_deleted',
             $email, $name, $staff->id,
-            fn() => Mail::to($email)->send(new \App\Mail\StaffAccountNoticeMail(
+            fn() => new \App\Mail\StaffAccountNoticeMail(
                 $name,
                 'deleted',
                 'Staff Account Removed',
                 'Your staff account at Learning Curve has been removed by the Main Admin. Thank you for your service.',
                 ['Account Email' => $email]
-            )),
+            ),
             'staff_management'
         );
 
